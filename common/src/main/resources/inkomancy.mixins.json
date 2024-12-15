@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "hans.inkomancy.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "ItemRendererMixin"
+  ],
+  "mixins": [
+    "ItemStackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
