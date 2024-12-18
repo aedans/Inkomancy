@@ -22,9 +22,8 @@ public class EnchantmentUtils {
   }
 
   public static boolean canAddEnchantment(ItemStack item, Holder<Enchantment> enchantment) {
-    return
-//        item.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE) ||
-        item.is(Items.BOOK)
+    return enchantment.value().canEnchant(item)
+        || item.is(Items.BOOK)
         || item.is(Items.ENCHANTED_BOOK);
   }
 

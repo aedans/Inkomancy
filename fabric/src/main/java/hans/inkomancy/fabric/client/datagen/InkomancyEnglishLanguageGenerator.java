@@ -15,7 +15,7 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
 
   @Override
   public void generateTranslations(HolderLookup.Provider provider, TranslationBuilder translationBuilder) {
-    translationBuilder.add("itemGroup.inkomancy_tab", "Inkomancy");
+    translationBuilder.add("itemGroup.inkomancy.inkomancy_tab", "Inkomancy");
 
     for (var ink : Ink.getInks()) {
       var name = ink.name.substring(0, 1).toUpperCase() + ink.name.substring(1);
