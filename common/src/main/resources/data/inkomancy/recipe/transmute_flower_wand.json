@@ -1,0 +1,7 @@
+{
+  "type": "inkomancy:transmutation",
+  "ingredient": "minecraft:bone_meal",
+  "result": {
+    "id": "inkomancy:flower_wand"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type": "inkomancy:transmutation",
+  "ingredient": "inkomancy:blue_quill",
+  "result": {
+    "id": "inkomancy:red_quill"
+  }
+}

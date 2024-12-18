@@ -21,6 +21,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -60,7 +62,8 @@ public final class Inkomancy {
     public static final Registrar<EntityType<?>> ENTITY_TYPE = MANAGER.get().get(Registries.ENTITY_TYPE);
     public static final Registrar<BlockEntityType<?>> BLOCK_ENTITY_TYPE = MANAGER.get().get(Registries.BLOCK_ENTITY_TYPE);
     public static final Registrar<DataComponentType<?>> DATA_COMPONENT_TYPE = MANAGER.get().get(Registries.DATA_COMPONENT_TYPE);
-    public static final Registrar<CreativeModeTab> CREATIVE_MODE_TAB = MANAGER.get().get(Registries.CREATIVE_MODE_TAB);
+    public static final Registrar<RecipeSerializer<?>> RECIPE_SERIALIZER = MANAGER.get().get(Registries.RECIPE_SERIALIZER);
+    public static final Registrar<RecipeType<?>> RECIPE_TYPE = MANAGER.get().get(Registries.RECIPE_TYPE);
 
     public static BlockBehaviour.Properties blockSettings(ResourceKey<Block> key) {
         return BlockBehaviour.Properties.of().setId(key);
@@ -168,8 +171,8 @@ public final class Inkomancy {
     }
 
     public static void init() {
-//        Registry.register(Registries.RECIPE_SERIALIZER, TransmutationRecipe.Type.ID, TransmutationRecipe.Serializer.INSTANCE);
-//        Registry.register(Registries.RECIPE_TYPE, TransmutationRecipe.Type.ID, TransmutationRecipe.Type.INSTANCE);
+        RECIPE_SERIALIZER.register(TransmutationRecipe.Type.ID, () -> TransmutationRecipe.Serializer.INSTANCE);
+        RECIPE_TYPE.register(TransmutationRecipe.Type.ID, () -> TransmutationRecipe.Type.INSTANCE);
 
         var tables = new HashMap<ResourceKey<LootTable>, Integer>();
 

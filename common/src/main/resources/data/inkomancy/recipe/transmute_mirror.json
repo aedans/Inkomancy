@@ -1,0 +1,7 @@
+{
+  "type": "inkomancy:transmutation",
+  "ingredient": "minecraft:glass",
+  "result": {
+    "id": "inkomancy:mirror"
+  }
+}

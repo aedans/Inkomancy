@@ -1,0 +1,7 @@
+{
+  "type": "inkomancy:transmutation",
+  "ingredient": "minecraft:stick",
+  "result": {
+    "id": "inkomancy:ink_wand"
+  }
+}

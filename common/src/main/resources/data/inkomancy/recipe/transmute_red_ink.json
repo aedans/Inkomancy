@@ -1,0 +1,7 @@
+{
+  "type": "inkomancy:transmutation",
+  "ingredient": "minecraft:redstone",
+  "result": {
+    "id": "inkomancy:red_ink"
+  }
+}
