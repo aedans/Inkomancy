@@ -36,10 +36,20 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
           ++_
           _+_
           """),
-      Glyph.create(RepairMorpheme.INSTANCE, 1, """
+      Glyph.create(GrowMorpheme.INSTANCE, 1, """
+          ++_
           _++
+          _+_
+          """),
+      Glyph.create(RepairMorpheme.INSTANCE, 1, """
+          __+
+          +++
           ++_
-          ++_
+          """),
+      Glyph.create(RepairMorpheme.INSTANCE, 1, """
+          +__
+          +++
+          _++
           """),
       Glyph.create(SelfMorpheme.INSTANCE, 1, """
           _+_
@@ -68,12 +78,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
           """),
       Glyph.create(TransmuteMorpheme.SMELT, 1, """
           ++_
-          +++
+          _++
           _++
           """),
       Glyph.create(TransmuteMorpheme.CRAFT, 1, """
           _++
-          +++
+          ++_
           ++_
           """),
       Glyph.create(VoidMorpheme.INSTANCE, 1, """
@@ -83,13 +93,23 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
           """),
       Glyph.create(BreakMorpheme.INSTANCE, 1, """
           +++
-          +_+
+          +++
           _++
           """),
       Glyph.create(BreakMorpheme.INSTANCE, 1, """
           +++
-          +_+
+          +++
           ++_
+          """),
+      Glyph.create(BreakMorpheme.INSTANCE, 1, """
+          ++_
+          +++
+          +++
+          """),
+      Glyph.create(BreakMorpheme.INSTANCE, 1, """
+          _++
+          +++
+          +++
           """),
       Glyph.create(ToolMorpheme.INSTANCE, 1, """
           +++
