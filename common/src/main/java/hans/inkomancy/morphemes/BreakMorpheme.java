@@ -34,11 +34,16 @@ public class BreakMorpheme extends Morpheme {
     Collections.shuffle(positions);
     var drops = new ArrayList<ItemStack>();
     for (var pos : positions) {
-      context.mana().consume(1 + (int) (context.world().getBlockState(pos).getDestroySpeed(context.world(), pos) * 10));
-      drops.addAll(context.world().getBlockState(pos).getDrops(new LootParams.Builder(context.world())
-          .withParameter(LootContextParams.ORIGIN, context.getPosition(spell).getCenter())
-          .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)));
-      context.world().destroyBlock(pos, drop);
+      try {
+        context.mana().consume(1 + (int) (context.world().getBlockState(pos).getDestroySpeed(context.world(), pos) * 10));
+        var items = context.world().getBlockState(pos).getDrops(new LootParams.Builder(context.world())
+            .withParameter(LootContextParams.ORIGIN, context.getPosition(spell).getCenter())
+            .withParameter(LootContextParams.TOOL, ItemStack.EMPTY));
+        context.world().destroyBlock(pos, drop);
+        drops.addAll(items);
+      } catch (Exception ignored) {
+        break;
+      }
     }
     return drops;
   }

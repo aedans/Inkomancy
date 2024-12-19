@@ -79,8 +79,8 @@ public abstract class Morpheme {
   public void interpret(Spell spell, SpellContext context) {
     try {
       interpretAsAction(spell, context);
-    } catch (InterpretError e) {
-      System.out.println("Error: " + e.getMessage());
+    } catch (Exception ignored) {
+
     }
   }
 
