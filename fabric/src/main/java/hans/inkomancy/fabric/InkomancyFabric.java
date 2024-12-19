@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,7 +22,7 @@ public final class InkomancyFabric implements ModInitializer {
 
         var tab = FabricItemGroup.builder()
             .icon(() -> new ItemStack(Inkomancy.VOID_INK_ITEM.get()))
-            .title(Component.translatable("itemGroup.inkomancy_tab"))
+            .title(Component.translatable("itemGroup.inkomancy.inkomancy_tab"))
             .build();
 
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Inkomancy.INKOMANCY_TAB_RL, tab);

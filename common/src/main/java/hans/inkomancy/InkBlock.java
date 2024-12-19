@@ -3,6 +3,7 @@ package hans.inkomancy;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
+import hans.inkomancy.inks.RedInk;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -66,15 +68,8 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
     builder.add(FACING);
   }
 
-  @Override
-  protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-    for (var itemStack : player.getHandSlots()) {
-      if (itemStack.getItem() instanceof BlockItem item && item.getBlock() == this) {
-        return InteractionResult.CONSUME;
-      }
-    }
-
-    if (world instanceof ServerLevel server && player instanceof ServerPlayer serverPlayer) {
+  public InteractionResult use(BlockState state, BlockPos pos, Level world, @Nullable Player player) {
+    if (world instanceof ServerLevel server && (player == null || player instanceof ServerPlayer)) {
       var ink = Ink.getBy(Ink::block, this);
       var parser = new SpellParser(server, Transform2D.of(state.getValue(FACING)), ink);
       var connected = parser.connectedBlocks(pos);
@@ -95,18 +90,29 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
       parser.handleInvalidBlocks(connected, blocks);
 
       var mana = new ManaProvider(ink, ink.getMana(blocks));
-      var context = new SpellContext(server, serverPlayer, null, ink, mana);
+      var context = new SpellContext(server, (ServerPlayer) player, null, ink, mana);
       spell.morpheme().interpret(spell, context);
 
       var i = 3;
       for (var block : blocks) {
-        if (world.getBlockEntity(block) instanceof InkBlockEntity entity) {
+        if (world.getBlockEntity(block) instanceof InkBlockEntity entity && entity.ticks == 0) {
           entity.ticks = i++ / 3;
         }
       }
     }
 
     return InteractionResult.SUCCESS;
+  }
+
+  @Override
+  protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+    for (var itemStack : player.getHandSlots()) {
+      if (itemStack.getItem() instanceof BlockItem item && item.getBlock() == this) {
+        return InteractionResult.CONSUME;
+      }
+    }
+
+    return use(state, pos, world, player);
   }
 
   @Override
@@ -145,6 +151,10 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
       dropResources(state, world, pos);
       world.removeBlock(pos, false);
       return;
+    }
+
+    if (Ink.getBy(Ink::block, this) == RedInk.INSTANCE && world.hasNeighborSignal(pos)) {
+      use(state, pos, world, null);
     }
 
     world.setBlockAndUpdate(pos, newState);

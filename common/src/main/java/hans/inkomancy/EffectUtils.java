@@ -1,6 +1,7 @@
 package hans.inkomancy;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -36,6 +37,11 @@ public class EffectUtils {
   public static void smokeEffect(ServerLevel world, BlockPos pos) {
     var p = pos.getBottomCenter();
     world.sendParticles(ParticleTypes.SMOKE, p.x(), p.y() + .2, p.z(), 5, .25, 0, .25, 0);
+  }
+
+  public static void redstoneEffect(ServerLevel world, BlockPos pos) {
+    var p = pos.getBottomCenter();
+    world.sendParticles(DustParticleOptions.REDSTONE, p.x(), p.y() + .2, p.z(), 3, .25, 0, .25, 0);
   }
 
   public static void transmuteEffect(ServerLevel world, BlockPos pos) {

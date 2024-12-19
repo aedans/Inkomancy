@@ -38,7 +38,7 @@ public class RedInk extends Ink {
 
   @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
-
+    EffectUtils.redstoneEffect(world, pos);
   }
 
   @Override
