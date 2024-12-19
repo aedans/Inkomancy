@@ -42,6 +42,11 @@ public class RedInk extends Ink {
   }
 
   @Override
+  public String lore() {
+    return "...";
+  }
+
+  @Override
   public ToolMaterial material() {
     return MATERIAL;
   }

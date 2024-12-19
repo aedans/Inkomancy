@@ -44,6 +44,8 @@ public abstract class Ink {
 
   public abstract void handleBlock(ServerLevel world, BlockPos pos);
 
+  public abstract String lore();
+
   public abstract ToolMaterial material();
 
   public abstract InkBlock block();

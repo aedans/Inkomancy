@@ -45,6 +45,11 @@ public class BlackInk extends Ink {
   }
 
   @Override
+  public String lore() {
+    return "...";
+  }
+
+  @Override
   public ToolMaterial material() {
     return MATERIAL;
   }

@@ -101,7 +101,7 @@ public final class Inkomancy {
     public static RegistrySupplier<BlockItem> registerInkItem(Ink ink) {
         var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink");
         var key = ResourceKey.create(Registries.ITEM, rl);
-        return ITEMS.register(rl, () -> new BlockItem(ink.block(), itemSettings(key)));
+        return ITEMS.register(rl, () -> new InkItem(ink.block(), itemSettings(key)));
     }
 
     public static RegistrySupplier<EntityType<InkBallEntity>> registerInkBallEntity() {

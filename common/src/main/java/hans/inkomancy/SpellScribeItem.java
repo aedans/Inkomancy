@@ -1,9 +1,7 @@
 package hans.inkomancy;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -29,8 +27,7 @@ public class SpellScribeItem extends Item {
   @Override
   public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
     if (InkHelperItem.hasHelper(stack)) {
-      var loreStyle = Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true);
-      tooltip.add(Component.literal("Paints the inscribed spell onto a flat surface").withStyle(loreStyle));
+      tooltip.add(Component.literal("Paints the inscribed spell onto a flat surface").withStyle(Util.LORE_STYLE));
     }
   }
 
