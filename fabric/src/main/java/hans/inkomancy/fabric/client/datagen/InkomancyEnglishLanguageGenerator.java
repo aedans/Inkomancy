@@ -20,7 +20,7 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
     for (var ink : Ink.getInks()) {
       var name = ink.name.substring(0, 1).toUpperCase() + ink.name.substring(1);
       translationBuilder.add(ink.item(), name + " Ink");
-      translationBuilder.add("tag.item.hans_magic." + ink.name + "_ink_tool_materials", name + " Ink Tool Materials");
+      translationBuilder.add("tag.item.inkomancy." + ink.name + "_ink_tool_materials", name + " Ink Tool Materials");
     }
 
     translationBuilder.add(Inkomancy.INK_HELPER.get(), "Inky");

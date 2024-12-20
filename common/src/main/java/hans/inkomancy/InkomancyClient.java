@@ -1,10 +1,13 @@
 package hans.inkomancy;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import org.jetbrains.annotations.NotNull;
 
 public class InkomancyClient {
   public static void init() {
+    EntityRendererRegistry.register(Inkomancy.INK_BALL_ENTITY, ThrownItemRenderer::new);
   }
 
   public static class TransparentDelegateVertexConsumer implements VertexConsumer {
