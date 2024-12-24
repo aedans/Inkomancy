@@ -22,9 +22,9 @@ public class BetweenMorpheme extends Morpheme {
     var p2 = Util.randomOf(ps.get(1));
     var box = BoundingBox.fromCorners(p1.blockPos(), p2.blockPos());
     var positions = new ArrayList<Position>();
-    for (int x = box.minX() + 1; x < box.maxX() - 1; x++) {
-      for (int y = box.minY(); y < box.maxY(); y++) {
-        for (int z = box.minZ() + 1; z < box.maxZ() - 1; z++) {
+    for (int x = box.minX() + 1; x < box.maxX(); x++) {
+      for (int y = box.minY() + 1; y < box.maxY(); y++) {
+        for (int z = box.minZ() + 1; z < box.maxZ(); z++) {
           positions.add(new Position(new BlockPos(x, y, z)));
         }
       }
