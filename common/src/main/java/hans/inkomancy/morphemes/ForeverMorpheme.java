@@ -18,7 +18,8 @@ public class ForeverMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var items = getArgs(spell, context, Type.ITEMS, m -> m::interpretAsItems)
+    var args = new Args(spell, context);
+    var items = args.get(Type.ITEMS, m -> m::interpretAsItems)
         .stream().flatMap(List::stream).toList();
     var modifiers = items.stream().map(this::asModifier).filter(Objects::nonNull).toList();
     var targets = items.stream().filter(item -> asModifier(item) == null).toList();
@@ -35,7 +36,7 @@ public class ForeverMorpheme extends Morpheme {
       }
     }
 
-    var spells = getArgs(spell, context, Type.SPELL, m -> m::interpretAsSpell);
+    var spells = args.get(Type.SPELL, m -> m::interpretAsSpell);
     for (var s : spells) {
       for (var target : targets) {
         context.mana().consume(256);

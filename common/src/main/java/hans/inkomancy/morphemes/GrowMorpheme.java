@@ -18,7 +18,7 @@ public class GrowMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var centers = getArgs(spell, context, Type.POSITION, m -> m::interpretAsPositions)
+    var centers = new Args(spell, context).get(Type.POSITION, m -> m::interpretAsPositions)
         .stream().flatMap(List::stream).map(Position::blockPos).collect(Collectors.toList());
     Collections.shuffle(centers);
     for (var center : centers) {

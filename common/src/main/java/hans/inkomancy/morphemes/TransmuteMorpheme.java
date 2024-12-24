@@ -20,7 +20,7 @@ public class TransmuteMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var inputs = getArgs(spell, context, Type.ITEMS, x -> x::interpretAsItems)
+    var inputs = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
 
     for (var item : inputs) {

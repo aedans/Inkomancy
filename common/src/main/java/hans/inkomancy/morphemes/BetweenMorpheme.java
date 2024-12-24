@@ -17,7 +17,7 @@ public class BetweenMorpheme extends Morpheme {
 
   @Override
   public List<Position> interpretAsPositions(Spell spell, SpellContext context) throws InterpretError {
-    var ps = getArgs(spell, context, Type.POSITION, m -> m::interpretAsPositions);
+    var ps = new Args(spell, context).get(Type.POSITION, m -> m::interpretAsPositions);
     var p1 = Util.randomOf(ps.get(0));
     var p2 = Util.randomOf(ps.get(1));
     var box = BoundingBox.fromCorners(p1.blockPos(), p2.blockPos());

@@ -49,8 +49,9 @@ public class VoidMorpheme extends Morpheme {
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
     var pos = context.getPosition(spell).getCenter();
+    var args = new Args(spell, context);
 
-    var entities = getArgs(spell, context, Type.ENTITIES, x -> x::interpretAsEntities)
+    var entities = args.get(Type.ENTITIES, x -> x::interpretAsEntities)
         .stream().flatMap(List::stream).toList();
     for (var delegate : entities) {
       delegate.update(entity ->
@@ -58,7 +59,7 @@ public class VoidMorpheme extends Morpheme {
               new TeleportTransition(context.world(), pos, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
     }
 
-    var items = getArgs(spell, context, Type.ITEMS, x -> x::interpretAsItems)
+    var items = args.get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
     for (var delegate : items) {
       context.world().addFreshEntity(new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get()));

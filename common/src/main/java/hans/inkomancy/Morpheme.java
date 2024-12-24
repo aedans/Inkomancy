@@ -98,15 +98,22 @@ public abstract class Morpheme {
     T interpret(Spell spell, SpellContext context) throws InterpretError;
   }
 
-  public <T> List<T> getArgs(Spell spell, SpellContext context, Type type, Function<Morpheme, Interpreter<T>> f) throws InterpretError {
-    var list = new ArrayList<T>();
-    for (var s : spell.connected()) {
-      if (s.morpheme().supported.contains(type)) {
-        list.add(f.apply(s.morpheme()).interpret(s, context));
-      }
+  public record Args(List<Spell> connected, Spell spell, SpellContext context) {
+    public Args(Spell spell, SpellContext context) {
+      this(new ArrayList<>(spell.connected()), spell, context);
     }
-    Collections.shuffle(list);
-    return list;
+
+    public <T> List<T> get(Type type, Function<Morpheme, Interpreter<T>> f) throws InterpretError {
+      var list = new ArrayList<T>();
+      for (var s : List.copyOf(connected)) {
+        if (s.morpheme().supported.contains(type)) {
+          connected.remove(s);
+          list.add(f.apply(s.morpheme()).interpret(s, context));
+        }
+      }
+      Collections.shuffle(list);
+      return list;
+    }
   }
 
   public record Position(Vec3 absolute, BlockPos blockPos) {

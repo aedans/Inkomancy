@@ -26,7 +26,7 @@ public class BreakMorpheme extends Morpheme {
   }
 
   public List<ItemStack> interpretBreak(Spell spell, SpellContext context, boolean drop) throws InterpretError {
-    var positions = getArgs(spell, context, Type.POSITION, m -> m::interpretAsPositions)
+    var positions = new Args(spell, context).get(Type.POSITION, m -> m::interpretAsPositions)
         .stream().flatMap(Collection::stream).map(Position::blockPos).collect(Collectors.toList());
     Collections.shuffle(positions);
     var drops = new ArrayList<ItemStack>();

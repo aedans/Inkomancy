@@ -18,9 +18,10 @@ public class SwapMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    List<Delegate<? extends Entity>> sources = getArgs(spell, context, Type.ENTITIES, m -> m::interpretAsEntities)
+    var args = new Args(spell, context);
+    List<Delegate<? extends Entity>> sources = args.get(Type.ENTITIES, m -> m::interpretAsEntities)
         .stream().flatMap(List::stream).collect(Collectors.toList());
-    var targets = getArgs(spell, context, Type.POSITION, m -> m::interpretAsPositions)
+    var targets = args.get(Type.POSITION, m -> m::interpretAsPositions)
         .stream().flatMap(List::stream).collect(Collectors.toList());
 
     if (sources.isEmpty() && context.caster() != null) {
