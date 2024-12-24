@@ -23,7 +23,7 @@ public class RedInk extends Ink {
   }
 
   @Override
-  public int consumeMana(int initial, int mana, int amount) throws InterpretError {
+  public int modifyMana(int initial, int mana, int amount) throws InterpretError {
     mana -= amount;
     if (mana < 0) {
       throw new InterpretError.OOM();

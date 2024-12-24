@@ -21,6 +21,32 @@ public class EnchantmentUtils {
     return null;
   }
 
+  public static boolean transferEnchantments(Delegate<ItemStack> from, Delegate<ItemStack> to) {
+    var enchantmentComponent = getEnchantmentsComponent(from.get());
+    if (enchantmentComponent == null) {
+      return false;
+    }
+
+    var builder = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+
+    for (var enchantment : enchantmentComponent.keySet()) {
+      var level = enchantmentComponent.getLevel(enchantment);
+      if (canAddEnchantment(to.get(), enchantment)) {
+        to.modify(item -> addEnchantment(item, enchantment, level));
+      } else {
+        builder.set(enchantment, level);
+      }
+    }
+
+    var newEnchantmentComponent = builder.toImmutable();
+    if (!enchantmentComponent.equals(newEnchantmentComponent)) {
+      from.modify(item -> setEnchantments(item, newEnchantmentComponent));
+      return true;
+    }
+
+    return false;
+  }
+
   public static boolean canAddEnchantment(ItemStack item, Holder<Enchantment> enchantment) {
     return enchantment.value().canEnchant(item)
         || item.is(Items.BOOK)

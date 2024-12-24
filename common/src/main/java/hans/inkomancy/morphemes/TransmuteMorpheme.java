@@ -4,7 +4,6 @@ import hans.inkomancy.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,10 +20,8 @@ public class TransmuteMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var inputs = new ArrayList<Delegate<ItemStack>>();
-    for (var s : spell.connected()) {
-      inputs.addAll(s.morpheme().interpretAsItems(s, context));
-    }
+    var inputs = getArgs(spell, context, Type.ITEMS, x -> x::interpretAsItems)
+        .stream().flatMap(List::stream).toList();
 
     for (var item : inputs) {
       var inventory = new SingleRecipeInput(item.get());

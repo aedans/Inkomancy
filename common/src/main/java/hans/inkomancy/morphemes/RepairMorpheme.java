@@ -14,7 +14,8 @@ public class RepairMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var items = getArg(spell, context, 0, List.of(Delegate.of(context.ink().item().getDefaultInstance())), m -> m::interpretAsItems);
+    var items = getArgs(spell, context, Type.ITEMS, m -> m::interpretAsItems)
+        .stream().flatMap(List::stream).toList();
     for (var item : items) {
       if (item.get().isDamaged()) {
         EffectUtils.repairEffect(context.world(), context.getPosition(spell));

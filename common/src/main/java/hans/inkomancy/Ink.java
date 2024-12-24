@@ -38,7 +38,7 @@ public abstract class Ink {
 
   public abstract int getMana(Set<BlockPos> blocks);
 
-  public abstract int consumeMana(int initial, int mana, int amount) throws InterpretError;
+  public abstract int modifyMana(int initial, int mana, int amount) throws InterpretError;
 
   public abstract void handleInvalidBlock(SpellParser parser, BlockPos pos);
 

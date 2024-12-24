@@ -5,10 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BreakMorpheme extends Morpheme {
@@ -29,8 +26,8 @@ public class BreakMorpheme extends Morpheme {
   }
 
   public List<ItemStack> interpretBreak(Spell spell, SpellContext context, boolean drop) throws InterpretError {
-    var positions = getArg(spell, context, 0, List.of(new Position(context.getPosition(spell))), m -> m::interpretAsPositions)
-        .stream().map(Position::blockPos).collect(Collectors.toList());
+    var positions = getArgs(spell, context, Type.POSITION, m -> m::interpretAsPositions)
+        .stream().flatMap(Collection::stream).map(Position::blockPos).collect(Collectors.toList());
     Collections.shuffle(positions);
     var drops = new ArrayList<ItemStack>();
     for (var pos : positions) {

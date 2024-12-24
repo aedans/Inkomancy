@@ -56,12 +56,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
           +++
           _+_
           """),
-      Glyph.create(SwapMorpheme.UP, 1, """
+      Glyph.create(SwapMorpheme.INSTANCE, 1, """
           _++
           _+_
           ++_
           """),
-      Glyph.create(SwapMorpheme.DOWN, 1, """
+      Glyph.create(SwapMorpheme.INSTANCE, 1, """
           ++_
           _+_
           _++

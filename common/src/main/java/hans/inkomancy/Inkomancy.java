@@ -198,7 +198,7 @@ public final class Inkomancy {
             if (tables.containsKey(key)) {
                 var spellScribe = LootItem.lootTableItem(SPELL_SCRIBE.get()).setWeight(2);
 
-                var mirrorSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.UP));
+                var mirrorSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE));
                 var mirror = LootItem.lootTableItem(MIRROR.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), mirrorSpell));
 
                 var blueQuillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.CRAFT, new Spell(VoidMorpheme.INSTANCE)));

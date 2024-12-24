@@ -25,7 +25,7 @@ public class BlackInk extends Ink {
   }
 
   @Override
-  public int consumeMana(int initial, int mana, int amount) throws InterpretError {
+  public int modifyMana(int initial, int mana, int amount) throws InterpretError {
     mana -= amount;
     if (mana < -initial) {
       throw new InterpretError.OOM();

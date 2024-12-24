@@ -10,6 +10,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -37,8 +39,7 @@ public abstract class Morpheme {
         SelfMorpheme.INSTANCE,
         SourceMorpheme.INSTANCE,
         StarMorpheme.INSTANCE,
-        SwapMorpheme.UP,
-        SwapMorpheme.DOWN,
+        SwapMorpheme.INSTANCE,
         ToolMorpheme.INSTANCE,
         TransmuteMorpheme.SMELT,
         TransmuteMorpheme.CRAFT,
@@ -97,13 +98,15 @@ public abstract class Morpheme {
     T interpret(Spell spell, SpellContext context) throws InterpretError;
   }
 
-  public <T> T getArg(Spell spell, SpellContext context, int index, T init, Function<Morpheme, Interpreter<T>> f) throws InterpretError {
-    if (spell.connected().size() <= index) {
-      return init;
-    } else {
-      var s = spell.connected().get(index);
-      return f.apply(s.morpheme()).interpret(s, context);
+  public <T> List<T> getArgs(Spell spell, SpellContext context, Type type, Function<Morpheme, Interpreter<T>> f) throws InterpretError {
+    var list = new ArrayList<T>();
+    for (var s : spell.connected()) {
+      if (s.morpheme().supported.contains(type)) {
+        list.add(f.apply(s.morpheme()).interpret(s, context));
+      }
     }
+    Collections.shuffle(list);
+    return list;
   }
 
   public record Position(Vec3 absolute, BlockPos blockPos) {

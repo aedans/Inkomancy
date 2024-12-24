@@ -23,7 +23,7 @@ public class VoidInk extends Ink {
   }
 
   @Override
-  public int consumeMana(int initial, int mana, int amount) {
+  public int modifyMana(int initial, int mana, int amount) {
     return mana;
   }
 

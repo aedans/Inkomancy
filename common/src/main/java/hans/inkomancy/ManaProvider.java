@@ -12,6 +12,10 @@ public class ManaProvider {
   }
 
   public void consume(int amount) throws InterpretError {
-    current = ink.consumeMana(initial, current, amount);
+    current = ink.modifyMana(initial, current, amount);
+  }
+
+  public void produce(int amount) throws InterpretError {
+    current = ink.modifyMana(initial, current, -amount);
   }
 }

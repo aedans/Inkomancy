@@ -18,8 +18,8 @@ public class GrowMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var centers = getArg(spell, context, 0, List.of(new Position(context.getPosition(spell))), m -> m::interpretAsPositions)
-        .stream().map(Position::blockPos).collect(Collectors.toList());
+    var centers = getArgs(spell, context, Type.POSITION, m -> m::interpretAsPositions)
+        .stream().flatMap(List::stream).map(Position::blockPos).collect(Collectors.toList());
     Collections.shuffle(centers);
     for (var center : centers) {
       for (var horizontal : new BlockPos[]{center, center.north(), center.east(), center.south(), center.west()}) {

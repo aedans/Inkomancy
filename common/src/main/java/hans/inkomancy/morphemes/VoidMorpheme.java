@@ -8,9 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -51,41 +49,20 @@ public class VoidMorpheme extends Morpheme {
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
     var pos = context.getPosition(spell).getCenter();
-    var entities = getArg(spell, context, 0, List.<EntityConvertible>of(), x -> this::interpretAsEntityConvertible);
 
-    for (var entityConvertible : entities) {
-      var entity = entityConvertible.withPos(pos);
-      if (context.world().getEntity(entity.get().getUUID()) == null) {
-        context.world().addFreshEntity(entity.get());
-      }
-    }
-  }
-
-  public interface EntityConvertible {
-    Delegate<? extends Entity> withPos(Vec3 pos) throws InterpretError;
-  }
-
-  public List<EntityConvertible> interpretAsEntityConvertible(Spell spell, SpellContext context) throws InterpretError {
-    var entities = new ArrayList<EntityConvertible>();
-
-    if (spell.morpheme().supported.contains(Type.ENTITIES)) {
-      for (var delegate : spell.morpheme().interpretAsEntities(spell, context)) {
-        entities.add(pos -> {
-          delegate.update(entity ->
-              EffectUtils.teleport(context.world(), entity,
-                  new TeleportTransition(context.world(), pos, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
-          return delegate;
-        });
-      }
-    } else if (spell.morpheme().supported.contains(Type.ITEMS)) {
-      for (var item : spell.morpheme().interpretAsItems(spell, context)) {
-        entities.add(pos -> Delegate.of(new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), item.get())));
-      }
-    } else {
-      throw new InterpretError.Conversion(spell.morpheme(), List.of(Type.ENTITIES, Type.ITEMS));
+    var entities = getArgs(spell, context, Type.ENTITIES, x -> x::interpretAsEntities)
+        .stream().flatMap(List::stream).toList();
+    for (var delegate : entities) {
+      delegate.update(entity ->
+          EffectUtils.teleport(context.world(), entity,
+              new TeleportTransition(context.world(), pos, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
     }
 
-    return entities;
+    var items = getArgs(spell, context, Type.ITEMS, x -> x::interpretAsItems)
+        .stream().flatMap(List::stream).toList();
+    for (var delegate : items) {
+      context.world().addFreshEntity(new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get()));
+    }
   }
 
   public AABB getBox(Spell spell, SpellContext context) {
