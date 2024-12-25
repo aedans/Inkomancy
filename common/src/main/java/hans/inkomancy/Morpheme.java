@@ -80,8 +80,8 @@ public abstract class Morpheme {
   public void interpret(Spell spell, SpellContext context) {
     try {
       interpretAsAction(spell, context);
-    } catch (Exception ignored) {
-
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

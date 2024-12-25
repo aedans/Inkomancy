@@ -6,7 +6,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
@@ -49,20 +48,12 @@ public class VoidMorpheme extends Morpheme {
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
     var pos = context.getPosition(spell).getCenter();
-    var args = new Args(spell, context);
 
-    var entities = args.get(Type.ENTITIES, x -> x::interpretAsEntities)
-        .stream().flatMap(List::stream).toList();
-    for (var delegate : entities) {
-      delegate.update(entity ->
-          EffectUtils.teleport(context.world(), entity,
-              new TeleportTransition(context.world(), pos, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
-    }
-
-    var items = args.get(Type.ITEMS, x -> x::interpretAsItems)
+    var items = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
     for (var delegate : items) {
       context.world().addFreshEntity(new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get()));
+      delegate.action(true);
     }
   }
 
@@ -77,12 +68,15 @@ public class VoidMorpheme extends Morpheme {
     }
 
     public void set(ItemStack modified) {
-      if (modified == null) {
+      entity.setItem(modified.copy());
+      EffectUtils.magicEffect(context.world(), entity.position());
+    }
+
+    @Override
+    public void action(boolean replace) {
+      if (replace) {
         entity.kill(context.world());
         EffectUtils.destroyEffect(context.world(), entity);
-      } else {
-        entity.setItem(modified.copy());
-        EffectUtils.magicEffect(context.world(), entity.position());
       }
     }
   }

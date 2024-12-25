@@ -46,10 +46,10 @@ public class ToolMorpheme extends Morpheme {
 
   private Map<TagKey<Block>, Item> toolTags(SpellContext context) {
     return Map.of(
-//        BlockTags.PICKAXE_MINEABLE, context.ink().pickaxe(),
-//        BlockTags.AXE_MINEABLE, context.ink().axe(),
-//        BlockTags.SHOVEL_MINEABLE, context.ink().shovel(),
-//        BlockTags.HOE_MINEABLE, context.ink().hoe()
+//        BlockTags.MINEABLE_WITH_PICKAXE, context.ink().pickaxe(),
+//        BlockTags.MINEABLE_WITH_AXE, context.ink().axe(),
+//        BlockTags.MINEABLE_WITH_SHOVEL, context.ink().shovel(),
+//        BlockTags.MINEABLE_WITH_HOE, context.ink().hoe()
     );
   }
 }

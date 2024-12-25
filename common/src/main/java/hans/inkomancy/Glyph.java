@@ -56,6 +56,11 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
           +++
           _+_
           """),
+      Glyph.create(MatchMorpheme.INSTANCE, 1, """
+          +++
+          _+_
+          +++
+          """),
       Glyph.create(SwapMorpheme.INSTANCE, 1, """
           _++
           _+_

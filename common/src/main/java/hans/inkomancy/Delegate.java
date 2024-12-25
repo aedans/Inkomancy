@@ -1,5 +1,6 @@
 package hans.inkomancy;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -7,6 +8,8 @@ public interface Delegate<T> {
   T get();
 
   void set(T modified);
+
+  void action(boolean replace);
 
   default void update(Consumer<T> f) {
     var t = get();
@@ -18,23 +21,47 @@ public interface Delegate<T> {
     set(f.apply(get()));
   }
 
-  default void destroy() {
-    set(null);
+  static <T> Delegate.Of<T> of(T t) {
+    return new Delegate.Of<>(t);
   }
 
-  static <T> Delegate<T> of(T t) {
-    return new Delegate<>() {
-      private T value = t;
+  class Of<T> implements Delegate<T> {
+    private T t;
 
-      @Override
-      public T get() {
-        return value;
-      }
+    private Of(T t) {
+      this.t = t;
+    }
 
-      @Override
-      public void set(T modified) {
-        value = modified;
-      }
-    };
+    @Override
+    public T get() {
+      return t;
+    }
+
+    @Override
+    public void set(T modified) {
+      t = modified;
+    }
+
+    @Override
+    public void action(boolean replace) {
+
+    }
+
+    @Override
+    public String toString() {
+      return "Delegate{" + t + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (o == null || getClass() != o.getClass()) return false;
+      Of<?> delegate = (Of<?>) o;
+      return Objects.equals(t, delegate.t);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(t);
+    }
   }
 }
