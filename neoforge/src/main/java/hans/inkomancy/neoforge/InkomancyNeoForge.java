@@ -18,7 +18,7 @@ public final class InkomancyNeoForge {
 
   public static final Supplier<CreativeModeTab> INKOMANCY_TAB = CREATIVE_MODE_TAB.register("inkomancy_tab", () -> CreativeModeTab.builder()
       .title(Component.translatable("itemGroup." + Inkomancy.MOD_ID + ".inkomancy_tab"))
-      .icon(() -> new ItemStack(Inkomancy.VOID_INK_ITEM.get()))
+      .icon(() -> new ItemStack(Inkomancy.INK_HELPER.get()))
       .displayItems((params, output) -> {
         for (var item : Inkomancy.items()) {
           output.accept(item);

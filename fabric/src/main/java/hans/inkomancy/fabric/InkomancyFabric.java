@@ -21,7 +21,7 @@ public final class InkomancyFabric implements ModInitializer {
         Inkomancy.init();
 
         var tab = FabricItemGroup.builder()
-            .icon(() -> new ItemStack(Inkomancy.VOID_INK_ITEM.get()))
+            .icon(() -> new ItemStack(Inkomancy.INK_HELPER.get()))
             .title(Component.translatable("itemGroup.inkomancy.inkomancy_tab"))
             .build();
 
