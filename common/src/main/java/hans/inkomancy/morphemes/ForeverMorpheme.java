@@ -1,6 +1,7 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,7 @@ public class ForeverMorpheme extends Morpheme {
       for (var target : targets) {
         context.mana().consume(256);
         if (modifier.apply(target)) {
-          EffectUtils.enchantEffect(context.world(), spell.pos());
+          context.world().playSound(spell.pos(), SoundEvents.ENCHANTMENT_TABLE_USE);
           break;
         } else {
           context.mana().produce(256);

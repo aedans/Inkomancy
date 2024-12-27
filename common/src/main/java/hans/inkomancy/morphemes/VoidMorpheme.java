@@ -2,11 +2,15 @@ package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Set;
@@ -52,7 +56,7 @@ public class VoidMorpheme extends Morpheme {
     var items = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
     for (var delegate : items) {
-      context.world().addFreshEntity(new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get()));
+      context.world().addEntity(level -> new ItemEntity(level, pos.x(), pos.y(), pos.z(), delegate.get()));
       delegate.action(true);
     }
   }
@@ -69,14 +73,16 @@ public class VoidMorpheme extends Morpheme {
 
     public void set(ItemStack modified) {
       entity.setItem(modified.copy());
-      EffectUtils.magicEffect(context.world(), entity.position());
+      context.world().playParticles(ParticleTypes.EFFECT, entity.position(), Vec3.ZERO, 10, .1);
     }
 
     @Override
     public void action(boolean replace) {
       if (replace) {
-        entity.kill(context.world());
-        EffectUtils.destroyEffect(context.world(), entity);
+        context.world().removeEntity(entity);
+        var particle = new ItemParticleOption(ParticleTypes.ITEM, entity.getItem());
+        context.world().playParticles(particle, entity.position(), Vec3.ZERO, 10, .1);
+        context.world().playSound(entity.blockPosition(), SoundEvents.ITEM_BREAK);
       }
     }
   }

@@ -2,7 +2,6 @@ package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.BonemealableBlock;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,13 +23,10 @@ public class GrowMorpheme extends Morpheme {
     for (var center : centers) {
       for (var horizontal : new BlockPos[]{center, center.north(), center.east(), center.south(), center.west()}) {
         for (var pos : new BlockPos[]{horizontal, horizontal.above(), horizontal.below()}) {
-          var state = context.world().getBlockState(pos);
-          if (state.getBlock() instanceof BonemealableBlock fertilizable
-              && fertilizable.isValidBonemealTarget(context.world(), pos, state)
-              && fertilizable.isBonemealSuccess(context.world(), context.world().random, pos, state)) {
+          var grow = context.world().canGrow(pos);
+          if (grow != null) {
             context.mana().consume(16);
-            fertilizable.performBonemeal(context.world(), context.world().random, pos, state);
-            EffectUtils.growEffect(context.world(), pos);
+            grow.run();
             break;
           }
         }

@@ -1,9 +1,7 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.portal.TeleportTransition;
 
 import java.util.List;
 import java.util.Set;
@@ -29,25 +27,14 @@ public class SwapMorpheme extends Morpheme {
     }
 
     if (targets.isEmpty()) {
-      BlockPos spawn = null;
-      if (context.caster() != null) {
-        spawn = context.caster().getRespawnPosition();
-      }
-
-      if (spawn == null) {
-        spawn = context.world().getSharedSpawnPos();
-      }
-
-      targets.add(new Position(spawn));
+      targets.add(new Position(context.world().getSpawn(context.caster())));
     }
 
     for (var source : sources) {
       var target = Util.randomOf(targets).absolute().add(0, 1, 0);
       var distance = Math.sqrt(source.get().blockPosition().distToCenterSqr(target));
       context.mana().consume((int) distance);
-      source.update(entity ->
-          EffectUtils.teleport(context.world(), entity,
-              new TeleportTransition(context.world(), target, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
+      source.update(entity -> context.world().teleport(entity, target));
     }
   }
 }

@@ -1,6 +1,7 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 
@@ -40,13 +41,14 @@ public class TransmuteMorpheme extends Morpheme {
 
   public <T extends RecipeInput> boolean doTransmuteSingle(
       Delegate<ItemStack> target, T inventory, Spell spell, SpellContext context, RecipeType<? extends Recipe<T>> recipe, int mana) throws InterpretError {
-    var match = context.world().recipeAccess().getRecipeFor(recipe, inventory, context.world());
-    if (match.isPresent()) {
+    var transmute = context.world().canTransmute(recipe, inventory);
+    if (transmute != null) {
+      context.world().playSound(spell.pos(), SoundEvents.CRAFTER_CRAFT);
       context.mana().consume(mana * target.get().getCount());
-      target.modify(item -> match.get().value().assemble(inventory, context.world().registryAccess()).copyWithCount(item.getCount()));
-      EffectUtils.transmuteEffect(context.world(), context.getPosition(spell));
+      return true;
     }
-    return match.isPresent();
+
+    return false;
   }
 
   public enum TransmuteType {
