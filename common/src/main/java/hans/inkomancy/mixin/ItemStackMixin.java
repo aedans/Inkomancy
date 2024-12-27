@@ -26,9 +26,11 @@ import java.util.function.Consumer;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements DataComponentHolder {
-  @Shadow protected abstract <T extends TooltipProvider> void addToTooltip(DataComponentType<T> dataComponentType, Item.TooltipContext tooltipContext, Consumer<Component> consumer, TooltipFlag tooltipFlag);
+  @Shadow
+  protected abstract <T extends TooltipProvider> void addToTooltip(DataComponentType<T> dataComponentType, Item.TooltipContext tooltipContext, Consumer<Component> consumer, TooltipFlag tooltipFlag);
 
-  @Shadow public abstract void setEntityRepresentation(@Nullable Entity entity);
+  @Shadow
+  public abstract void setEntityRepresentation(@Nullable Entity entity);
 
   @Inject(at = @At("TAIL"), method = "addToTooltip")
   public <T extends TooltipProvider> void addToTooltip(

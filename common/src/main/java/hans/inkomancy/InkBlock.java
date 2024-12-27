@@ -143,7 +143,7 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
 
   @Override
   protected void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock,
-                                Orientation wireOrientation, boolean notify) {
+                                 Orientation wireOrientation, boolean notify) {
     super.neighborChanged(state, world, pos, sourceBlock, wireOrientation, notify);
 
     var newState = getState(world, pos, state.getValue(FACING));

@@ -5,7 +5,8 @@ import hans.inkomancy.inks.RedInk;
 import hans.inkomancy.inks.VoidInk;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Set;

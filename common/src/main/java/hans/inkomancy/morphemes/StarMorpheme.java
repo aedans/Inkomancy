@@ -1,6 +1,9 @@
 package hans.inkomancy.morphemes;
 
-import hans.inkomancy.*;
+import hans.inkomancy.InterpretError;
+import hans.inkomancy.Morpheme;
+import hans.inkomancy.Spell;
+import hans.inkomancy.SpellContext;
 import net.minecraft.sounds.SoundEvents;
 
 import java.util.Set;
