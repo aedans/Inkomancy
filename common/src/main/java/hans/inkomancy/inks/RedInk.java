@@ -40,7 +40,7 @@ public class RedInk extends Ink {
 
   @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
-    InteractableWorld.of(world).playParticles(DustParticleOptions.REDSTONE, pos.getBottomCenter(), new Vec3(.25, 0, .25), 3, 0);
+    InteractableWorld.of(world).playParticles(DustParticleOptions.REDSTONE, pos.getBottomCenter(), new Vec3(.25, .25, .25), 3, 0);
   }
 
   @Override

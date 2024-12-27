@@ -73,7 +73,7 @@ public class VoidMorpheme extends Morpheme {
 
     public void set(ItemStack modified) {
       entity.setItem(modified.copy());
-      context.world().playParticles(ParticleTypes.EFFECT, entity.position(), Vec3.ZERO, 10, .1);
+      context.world().playParticles(ParticleTypes.EFFECT, entity.position().add(0, 0.2, 0), Vec3.ZERO, 10, .1);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class VoidMorpheme extends Morpheme {
       if (replace) {
         context.world().removeEntity(entity);
         var particle = new ItemParticleOption(ParticleTypes.ITEM, entity.getItem());
-        context.world().playParticles(particle, entity.position(), Vec3.ZERO, 10, .1);
+        context.world().playParticles(particle, entity.position(), Vec3.ZERO.add(0, 0.2, 0), 10, .1);
         context.world().playSound(entity.blockPosition(), SoundEvents.ITEM_BREAK);
       }
     }

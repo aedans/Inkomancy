@@ -113,7 +113,7 @@ public record InteractableLevel(ServerLevel level) implements InteractableWorld 
 
   @Override
   public <T extends ParticleOptions> void playParticles(T particleOptions, Vec3 pos, Vec3 offset, int number, double speed) {
-    level.sendParticles(particleOptions, pos.x, pos.y + .2, pos.z, number, offset.x, offset.y, offset.z, speed);
+    level.sendParticles(particleOptions, pos.x, pos.y, pos.z, number, offset.x, offset.y, offset.z, speed);
   }
 
   record BlockItemDelegate(Level level, ItemStack item, BlockPos pos, boolean drop) implements Delegate<ItemStack> {

@@ -43,7 +43,7 @@ public class BlackInk extends Ink {
   @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
     world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
-    InteractableWorld.of(world).playParticles(ParticleTypes.SMOKE, pos.getBottomCenter(), new Vec3(.25, 0, .25), 5, 0);
+    InteractableWorld.of(world).playParticles(ParticleTypes.SMOKE, pos.getBottomCenter(), new Vec3(.25, .25, .25), 5, 0);
   }
 
   @Override
