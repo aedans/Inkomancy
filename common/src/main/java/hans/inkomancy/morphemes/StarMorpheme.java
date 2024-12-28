@@ -20,7 +20,7 @@ public class StarMorpheme extends Morpheme {
     if (context.caster() != null) {
       context.mana().consume(1);
       context.world().throwProjectile(context.caster());
-      context.world().playSound(context.caster().blockPosition(), SoundEvents.INK_SAC_USE);
+      context.world().playSound(context.world().getPosition(context.caster()).blockPos(), SoundEvents.INK_SAC_USE);
     }
   }
 }

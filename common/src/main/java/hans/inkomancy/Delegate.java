@@ -21,14 +21,10 @@ public interface Delegate<T> {
     set(f.apply(get()));
   }
 
-  static <T> Instance<T> of(T t) {
-    return new Instance<>(t);
-  }
-
   class Instance<T> implements Delegate<T> {
     private T t;
 
-    private Instance(T t) {
+    public Instance(T t) {
       this.t = t;
     }
 

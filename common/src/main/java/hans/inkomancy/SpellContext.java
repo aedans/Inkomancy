@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 public record SpellContext(
     InteractableWorld world,
     ManaProvider mana,
-    @Nullable ServerPlayer caster,
+    @Nullable InteractableWorld.EntityRef<ServerPlayer> caster,
     @Nullable BlockPos sourcePos
 ) {
   public BlockPos getPosition(Spell spell) {

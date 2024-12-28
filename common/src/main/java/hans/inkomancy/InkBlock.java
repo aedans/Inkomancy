@@ -90,7 +90,7 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
       parser.handleInvalidBlocks(connected, blocks);
 
       var mana = new ManaProvider(ink, ink.getMana(blocks));
-      var context = new SpellContext(InteractableWorld.of(server), mana, (ServerPlayer) player, null);
+      var context = new SpellContext(InteractableWorld.of(server), mana, new InteractableWorld.EntityRef.Instance<>((ServerPlayer) player), null);
       spell.morpheme().interpret(spell, context);
 
       var i = 3;

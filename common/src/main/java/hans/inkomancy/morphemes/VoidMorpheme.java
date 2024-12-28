@@ -5,11 +5,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -19,19 +17,12 @@ public class VoidMorpheme extends Morpheme {
   public static final VoidMorpheme INSTANCE = new VoidMorpheme();
 
   private VoidMorpheme() {
-    super("void", Set.of(Type.ENTITIES, Type.ITEMS, Type.POSITION, Type.ACTION));
-  }
-
-  @Override
-  public List<? extends Delegate<? extends Entity>> interpretAsEntities(Spell spell, SpellContext context) {
-    var box = getBox(spell, context);
-    var entities = context.world().getEntities(EntityTypeTest.forClass(Entity.class), box, x -> true);
-    return entities.stream().map(Delegate::of).toList();
+    super("void", Set.of(Type.ITEMS, Type.POSITION, Type.ACTION));
   }
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) {
-    var box = getBox(spell, context);
+    var box = Util.getBox(context.getPosition(spell));
     var entities = context.world().getEntities(EntityTypeTest.forClass(ItemEntity.class), box, x -> true);
     return entities.stream().map(entity -> new ItemStackEntityDelegate(context, entity)).toList();
   }
@@ -59,11 +50,6 @@ public class VoidMorpheme extends Morpheme {
       context.world().addEntity(level -> new ItemEntity(level, pos.x(), pos.y(), pos.z(), delegate.get()));
       delegate.action(true);
     }
-  }
-
-  public AABB getBox(Spell spell, SpellContext context) {
-    var position = context.getPosition(spell);
-    return AABB.encapsulatingFullBlocks(position.offset(-1, -1, -1), position.offset(1, 1, 1));
   }
 
   private record ItemStackEntityDelegate(SpellContext context, ItemEntity entity) implements Delegate<ItemStack> {
