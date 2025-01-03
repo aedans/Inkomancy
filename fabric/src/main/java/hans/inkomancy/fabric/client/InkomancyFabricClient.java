@@ -13,7 +13,7 @@ public final class InkomancyFabricClient implements ClientModInitializer {
         InkomancyClient.init();
 
         for (var ink : Ink.getInks()) {
-            BlockRenderLayerMap.INSTANCE.putBlock(ink.block(), RenderType.translucent());
+            BlockRenderLayerMap.INSTANCE.putBlock(ink.getBlock(), RenderType.translucent());
         }
     }
 }

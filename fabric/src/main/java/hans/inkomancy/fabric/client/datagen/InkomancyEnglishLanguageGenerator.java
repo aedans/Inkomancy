@@ -2,6 +2,7 @@ package hans.inkomancy.fabric.client.datagen;
 
 import hans.inkomancy.Ink;
 import hans.inkomancy.Inkomancy;
+import hans.inkomancy.Morpheme;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
@@ -19,8 +20,13 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
 
     for (var ink : Ink.getInks()) {
       var name = ink.name.substring(0, 1).toUpperCase() + ink.name.substring(1);
-      translationBuilder.add(ink.item(), name + " Ink");
+      translationBuilder.add(ink.getItem(), name + " Ink");
       translationBuilder.add("tag.item.inkomancy." + ink.name + "_ink_tool_materials", name + " Ink Tool Materials");
+    }
+
+    for (var morpheme : Morpheme.getMorphemes()) {
+      var name = morpheme.name.substring(0, 1).toUpperCase() + morpheme.name.substring(1);
+      translationBuilder.add(morpheme.getItem(), name + " Morpheme");
     }
 
     translationBuilder.add(Inkomancy.INK_HELPER.get(), "Inky");

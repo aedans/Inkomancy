@@ -4,11 +4,9 @@ import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Set;
@@ -54,20 +52,5 @@ public class BlackInk extends Ink {
   @Override
   public ToolMaterial material() {
     return MATERIAL;
-  }
-
-  @Override
-  public InkBlock block() {
-    return Inkomancy.BLACK_INK_BLOCK.get();
-  }
-
-  @Override
-  public BlockEntityType<InkBlockEntity> blockEntity() {
-    return Inkomancy.BLACK_INK_BLOCK_ENTITY.get();
-  }
-
-  @Override
-  public BlockItem item() {
-    return Inkomancy.BLACK_INK_ITEM.get();
   }
 }

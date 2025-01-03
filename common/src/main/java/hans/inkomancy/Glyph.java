@@ -18,7 +18,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
       +++
       """);
 
-  public static final Glyph[] GLYPHS = new Glyph[]{
+  public static final List<Glyph> GLYPHS = new ArrayList<>(List.of(
       Glyph.create(BetweenMorpheme.INSTANCE, 0, """
           _++_
           ++_+
@@ -131,9 +131,34 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
       Glyph.create(ReadMorpheme.INSTANCE, 1, """
           +++
           +++
-          """),
-      START,
-  };
+          """)));
+
+  static {
+    var manifestGlyphs = new ArrayList<Glyph>();
+
+    for (var glyph : GLYPHS) {
+      var width = glyph.width + 4;
+      var height = glyph.height + 4;
+      var values = new boolean[width * height];
+      for (var col = 0; col < width; col++) {
+        for (var row = 0; row < height; row++) {
+          var i = col + row * width;
+          if (col == 0 || col == width - 1 || row == 0 || row == height - 1) {
+            values[i] = true;
+          } else if (col >= 2 && col <= width - 3 && row >= 2 && row <= height - 3) {
+            values[i] = glyph.valueAt(row - 2, col - 2);
+          } else {
+            values[i] = false;
+          }
+        }
+      }
+
+      manifestGlyphs.add(new Glyph(new ManifestMorpheme(glyph.morpheme), width, height, glyph.center + 2, values));
+    }
+
+    GLYPHS.addAll(manifestGlyphs);
+    GLYPHS.add(START);
+  }
 
   public static final Map<Morpheme, List<Glyph>> GLYPH_MAP = new HashMap<>();
 

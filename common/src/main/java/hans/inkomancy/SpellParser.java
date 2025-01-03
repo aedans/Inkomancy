@@ -21,7 +21,7 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
       BlockPos current = toScan.removeFirst();
       scanned.add(current);
 
-      if (!ink.block().canAttach(world.getBlockState(current), transform)) {
+      if (!ink.getBlock().canAttach(world.getBlockState(current), transform)) {
         continue;
       } else {
         connected.add(current);
@@ -42,7 +42,7 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
     var starts = new ArrayList<Pair<BlockPos, Direction>>();
     for (var current : connected) {
       for (var direction : transform.directions()) {
-        if (Glyph.START.test(world, current, transform.withForwards(direction), ink.block())) {
+        if (Glyph.START.test(world, current, transform.withForwards(direction), ink.getBlock())) {
           starts.add(new Pair<>(current, direction));
         }
       }
@@ -70,12 +70,12 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
         continue;
       }
 
-      if (ink.block().canAttach(world.getBlockState(connector.pos()), transform)) {
+      if (ink.getBlock().canAttach(world.getBlockState(connector.pos()), transform)) {
         var localTransform = transform.withForwards(connector.dir());
         var glyphPos = connector.pos().relative(localTransform.forwards());
 
         for (var glyph : Glyph.GLYPHS) {
-          if (glyph.test(world, glyphPos, localTransform, ink.block())) {
+          if (glyph.test(world, glyphPos, localTransform, ink.getBlock())) {
             blocks.add(connector.pos());
             spell.connected().add(parseSpell(glyphPos, connector.dir(), glyph, blocks, depth + 1));
             break;

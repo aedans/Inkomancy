@@ -1,6 +1,7 @@
 package hans.inkomancy;
 
 import com.mojang.serialization.Codec;
+import dev.architectury.registry.registries.RegistrySupplier;
 import hans.inkomancy.morphemes.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
@@ -19,12 +20,21 @@ public abstract class Morpheme {
   public static final Codec<Morpheme> CODEC = Codec.STRING.xmap(Morpheme::of, (m) -> m.name);
   public static final StreamCodec<ByteBuf, Morpheme> PACKET_CODEC = ByteBufCodecs.STRING_UTF8.map(Morpheme::of, (m) -> m.name);
 
-  public String name;
-  public Set<Type> supported;
+  public final String name;
+  public final Set<Type> supported;
+  private RegistrySupplier<MorphemeItem> item;
 
   protected Morpheme(String name, Set<Type> supported) {
     this.name = name;
     this.supported = supported;
+  }
+
+  public void register() {
+    this.item = Inkomancy.registerMorphemeItem(this);
+  }
+
+  public MorphemeItem getItem() {
+    return item.get();
   }
 
   public static Morpheme[] getMorphemes() {

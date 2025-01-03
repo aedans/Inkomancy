@@ -15,7 +15,7 @@ public class InkomancyBlockLootTableGenerator extends FabricBlockLootTableProvid
   @Override
   public void generate() {
     for (var ink : Ink.getInks()) {
-      add(ink.block(), this.createSingleItemTable(ink.item()));
+      add(ink.getBlock(), this.createSingleItemTable(ink.getItem()));
     }
   }
 }

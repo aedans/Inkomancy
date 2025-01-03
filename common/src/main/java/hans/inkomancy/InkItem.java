@@ -16,7 +16,7 @@ public class InkItem extends BlockItem {
   @Override
   public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
     if (InkHelperItem.hasHelper(stack)) {
-      tooltip.add(Component.literal(Ink.getBy(Ink::item, this).lore()).withStyle(Util.LORE_STYLE));
+      tooltip.add(Component.literal(Ink.getBy(Ink::getItem, this).lore()).withStyle(Util.LORE_STYLE));
     }
   }
 }

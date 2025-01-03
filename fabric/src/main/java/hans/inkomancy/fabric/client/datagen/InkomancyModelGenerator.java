@@ -8,6 +8,10 @@ import com.mojang.datafixers.util.Pair;
 import hans.inkomancy.Ink;
 import hans.inkomancy.InkBlock;
 import hans.inkomancy.Inkomancy;
+import hans.inkomancy.Morpheme;
+import hans.inkomancy.inks.BlackInk;
+import hans.inkomancy.inks.RedInk;
+import hans.inkomancy.inks.VoidInk;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -15,7 +19,6 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.*;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -183,15 +186,19 @@ public class InkomancyModelGenerator extends FabricModelProvider {
 
   @Override
   public void generateBlockStateModels(BlockModelGenerators generator) {
-    generateInkBlockStateModel(generator, "black_ink", Inkomancy.BLACK_INK_BLOCK.get());
-    generateInkBlockStateModel(generator, "red_ink", Inkomancy.RED_INK_BLOCK.get());
-    generateInkBlockStateModel(generator, "void_ink", Inkomancy.VOID_INK_BLOCK.get());
+    generateInkBlockStateModel(generator, "black_ink", BlackInk.INSTANCE.getBlock());
+    generateInkBlockStateModel(generator, "red_ink", RedInk.INSTANCE.getBlock());
+    generateInkBlockStateModel(generator, "void_ink", VoidInk.INSTANCE.getBlock());
   }
 
   @Override
   public void generateItemModels(ItemModelGenerators generator) {
     for (var ink : Ink.getInks()) {
-      generator.generateFlatItem(ink.item(), ModelTemplates.FLAT_ITEM);
+      generator.generateFlatItem(ink.getItem(), ModelTemplates.FLAT_ITEM);
+    }
+
+    for (var morpheme : Morpheme.getMorphemes()) {
+      generator.generateFlatItem(morpheme.getItem(), ModelTemplates.FLAT_ITEM);
     }
 
     generator.generateFlatItem(Inkomancy.INK_HELPER.get(), ModelTemplates.FLAT_ITEM);

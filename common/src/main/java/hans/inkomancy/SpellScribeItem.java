@@ -45,7 +45,7 @@ public class SpellScribeItem extends Item {
         }
 
         for (var block : writer.getBlocks(glyphs, transform)) {
-          context.getLevel().setBlockAndUpdate(block, ink.block().defaultBlockState().setValue(InkBlock.FACING, transform.facing()));
+          context.getLevel().setBlockAndUpdate(block, ink.getBlock().defaultBlockState().setValue(InkBlock.FACING, transform.facing()));
         }
 
         context.getLevel().playSound(null, context.getClickedPos(), SoundEvents.INK_SAC_USE, SoundSource.NEUTRAL);

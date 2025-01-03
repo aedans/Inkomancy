@@ -9,7 +9,6 @@ import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 import hans.inkomancy.inks.BlackInk;
 import hans.inkomancy.inks.RedInk;
-import hans.inkomancy.inks.VoidInk;
 import hans.inkomancy.morphemes.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
@@ -20,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -75,6 +73,12 @@ public final class Inkomancy {
     return new Item.Properties().useItemDescriptionPrefix().setId(key);
   }
 
+  public static RegistrySupplier<Item> registerItem(String name, Function<ResourceKey<Item>, Item> item) {
+    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+    var key = ResourceKey.create(Registries.ITEM, rl);
+    return ITEMS.register(rl, () -> item.apply(key));
+  }
+
   public static RegistrySupplier<InkBlock> registerInkBlock(Ink ink) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink");
     var key = ResourceKey.create(Registries.BLOCK, rl);
@@ -89,21 +93,21 @@ public final class Inkomancy {
             .sound(sound)));
   }
 
-  public static RegistrySupplier<BlockEntityType<InkBlockEntity>> registerInkBlockEntity(Ink ink) {
-    return BLOCK_ENTITY_TYPE.register(ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink"),
-        () -> createBlockEntityType((pos, state) -> new InkBlockEntity(ink.blockEntity(), pos, state), ink.block()));
-  }
-
-  public static RegistrySupplier<Item> registerItem(String name, Function<ResourceKey<Item>, Item> item) {
-    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
-    var key = ResourceKey.create(Registries.ITEM, rl);
-    return ITEMS.register(rl, () -> item.apply(key));
-  }
-
-  public static RegistrySupplier<BlockItem> registerInkItem(Ink ink) {
+  public static RegistrySupplier<InkItem> registerInkItem(Ink ink) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink");
     var key = ResourceKey.create(Registries.ITEM, rl);
-    return ITEMS.register(rl, () -> new InkItem(ink.block(), itemSettings(key)));
+    return ITEMS.register(rl, () -> new InkItem(ink.getBlock(), itemSettings(key)));
+  }
+
+  public static RegistrySupplier<BlockEntityType<InkBlockEntity>> registerInkBlockEntity(Ink ink) {
+    return BLOCK_ENTITY_TYPE.register(ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink"),
+        () -> createBlockEntityType((pos, state) -> new InkBlockEntity(ink.getBlockEntity(), pos, state), ink.getBlock()));
+  }
+
+  public static RegistrySupplier<MorphemeItem> registerMorphemeItem(Morpheme morpheme) {
+    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, morpheme.name + "_morpheme");
+    var key = ResourceKey.create(Registries.ITEM, rl);
+    return ITEMS.register(rl, () -> new MorphemeItem(morpheme, itemSettings(key)));
   }
 
   public static RegistrySupplier<EntityType<InkBallEntity>> registerInkBallEntity() {
@@ -119,18 +123,6 @@ public final class Inkomancy {
     );
   }
 
-  public static final RegistrySupplier<InkBlock> BLACK_INK_BLOCK = registerInkBlock(BlackInk.INSTANCE);
-  public static final RegistrySupplier<BlockEntityType<InkBlockEntity>> BLACK_INK_BLOCK_ENTITY = registerInkBlockEntity(BlackInk.INSTANCE);
-  public static final RegistrySupplier<BlockItem> BLACK_INK_ITEM = registerInkItem(BlackInk.INSTANCE);
-
-  public static final RegistrySupplier<InkBlock> RED_INK_BLOCK = registerInkBlock(RedInk.INSTANCE);
-  public static final RegistrySupplier<BlockEntityType<InkBlockEntity>> RED_INK_BLOCK_ENTITY = registerInkBlockEntity(RedInk.INSTANCE);
-  public static final RegistrySupplier<BlockItem> RED_INK_ITEM = registerInkItem(RedInk.INSTANCE);
-
-  public static final RegistrySupplier<InkBlock> VOID_INK_BLOCK = registerInkBlock(VoidInk.INSTANCE);
-  public static final RegistrySupplier<BlockEntityType<InkBlockEntity>> VOID_INK_BLOCK_ENTITY = registerInkBlockEntity(VoidInk.INSTANCE);
-  public static final RegistrySupplier<BlockItem> VOID_INK_ITEM = registerInkItem(VoidInk.INSTANCE);
-
   public static final RegistrySupplier<Item> SPELL_SCRIBE = registerItem("spell_scribe", key -> new SpellScribeItem(itemSettings(key), BlackInk.INSTANCE));
   public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
   public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
@@ -138,7 +130,7 @@ public final class Inkomancy {
   public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
   public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
 
-  public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new Item(itemSettings(key)));
+  public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new InkHelperItem(itemSettings(key)));
   public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
   public static final RegistrySupplier<EntityType<InkBallEntity>> INK_BALL_ENTITY = registerInkBallEntity();
 
@@ -156,7 +148,11 @@ public final class Inkomancy {
   public static List<Item> items() {
     var items = new ArrayList<Item>();
     for (var ink : Ink.getInks()) {
-      items.add(ink.item());
+      items.add(ink.getItem());
+    }
+
+    for (var mopheme : Morpheme.getMorphemes()) {
+      items.add(mopheme.getItem());
     }
 
     items.add(SPELL_SCRIBE.get());
@@ -173,6 +169,14 @@ public final class Inkomancy {
   }
 
   public static void init() {
+    for (var ink : Ink.getInks()) {
+      ink.register();
+    }
+
+    for (var morpheme : Morpheme.getMorphemes()) {
+      morpheme.register();
+    }
+
     RECIPE_SERIALIZER.register(TransmutationRecipe.Type.ID, () -> TransmutationRecipe.Serializer.INSTANCE);
     RECIPE_TYPE.register(TransmutationRecipe.Type.ID, () -> TransmutationRecipe.Type.INSTANCE);
 

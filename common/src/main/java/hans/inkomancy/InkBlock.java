@@ -70,7 +70,7 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
 
   public InteractionResult use(BlockState state, BlockPos pos, Level world, @Nullable Player player) {
     if (world instanceof ServerLevel server && (player == null || player instanceof ServerPlayer)) {
-      var ink = Ink.getBy(Ink::block, this);
+      var ink = Ink.getBy(Ink::getBlock, this);
       var parser = new SpellParser(server, Transform2D.of(state.getValue(FACING)), ink);
       var connected = parser.connectedBlocks(pos);
       if (connected.size() > 1000) {
@@ -117,7 +117,7 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
 
   @Override
   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-    return new InkBlockEntity(Ink.getBy(Ink::block, this).blockEntity(), pos, state);
+    return new InkBlockEntity(Ink.getBy(Ink::getBlock, this).getBlockEntity(), pos, state);
   }
 
   @Override
@@ -127,7 +127,7 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
         if (entity.ticks == 1) {
           entity.ticks--;
           if (world instanceof ServerLevel server) {
-            Ink.getBy(Ink::block, InkBlock.this).handleBlock(server, pos);
+            Ink.getBy(Ink::getBlock, InkBlock.this).handleBlock(server, pos);
           }
         } else if (entity.ticks > 1) {
           entity.ticks--;
@@ -153,7 +153,7 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
       return;
     }
 
-    if (Ink.getBy(Ink::block, this) == RedInk.INSTANCE && world.hasNeighborSignal(pos)) {
+    if (Ink.getBy(Ink::getBlock, this) == RedInk.INSTANCE && world.hasNeighborSignal(pos)) {
       use(state, pos, world, null);
     }
 
