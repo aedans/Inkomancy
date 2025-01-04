@@ -9,14 +9,10 @@ import java.util.List;
 import java.util.Set;
 
 public class TransmuteMorpheme extends Morpheme {
-  public static final TransmuteMorpheme SMELT = new TransmuteMorpheme(TransmuteType.SMELT);
-  public static final TransmuteMorpheme CRAFT = new TransmuteMorpheme(TransmuteType.CRAFT);
+  public static final TransmuteMorpheme INSTANCE = new TransmuteMorpheme();
 
-  public final TransmuteType type;
-
-  private TransmuteMorpheme(TransmuteType type) {
-    super("transmute_" + type.toString().toLowerCase(), Set.of(Type.ACTION));
-    this.type = type;
+  private TransmuteMorpheme() {
+    super("transmute", Set.of(Type.ACTION));
   }
 
   @Override
@@ -26,16 +22,11 @@ public class TransmuteMorpheme extends Morpheme {
 
     for (var item : inputs) {
       var inventory = new SingleRecipeInput(item.get());
-      var craftingInventory = CraftingInput.of(1, 1, List.of(item.get()));
       if (doTransmuteSingle(item, inventory, spell, context, TransmutationRecipe.Type.INSTANCE, 4)) {
         continue;
       }
 
-      if (type == TransmuteType.SMELT) {
-        doTransmuteSingle(item, inventory, spell, context, RecipeType.SMELTING, 2);
-      } else if (type == TransmuteType.CRAFT) {
-        doTransmuteSingle(item, craftingInventory, spell, context, RecipeType.CRAFTING, 1);
-      }
+      doTransmuteSingle(item, inventory, spell, context, RecipeType.SMELTING, 2);
     }
   }
 
@@ -49,9 +40,5 @@ public class TransmuteMorpheme extends Morpheme {
     }
 
     return false;
-  }
-
-  public enum TransmuteType {
-    SMELT, CRAFT
   }
 }

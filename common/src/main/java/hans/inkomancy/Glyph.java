@@ -81,12 +81,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
           +++
           ++_
           """),
-      Glyph.create(TransmuteMorpheme.SMELT, 1, """
+      Glyph.create(TransmuteMorpheme.INSTANCE, 1, """
           ++_
           _++
           _++
           """),
-      Glyph.create(TransmuteMorpheme.CRAFT, 1, """
+      Glyph.create(TransmuteMorpheme.INSTANCE, 1, """
           _++
           ++_
           ++_

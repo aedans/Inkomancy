@@ -151,10 +151,6 @@ public final class Inkomancy {
       items.add(ink.getItem());
     }
 
-    for (var mopheme : Morpheme.getMorphemes()) {
-      items.add(mopheme.getItem());
-    }
-
     items.add(SPELL_SCRIBE.get());
     items.add(MIRROR.get());
     items.add(BLUE_QUILL.get());
@@ -164,6 +160,10 @@ public final class Inkomancy {
 
     items.add(INK_HELPER.get());
     items.add(INK_BALL.get());
+
+    for (var mopheme : Morpheme.getMorphemes()) {
+      items.add(mopheme.getItem());
+    }
 
     return items;
   }
@@ -207,11 +207,9 @@ public final class Inkomancy {
         var mirrorSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE));
         var mirror = LootItem.lootTableItem(MIRROR.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), mirrorSpell));
 
-        var blueQuillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.CRAFT, new Spell(VoidMorpheme.INSTANCE)));
-        var blueQuill = LootItem.lootTableItem(BLUE_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), blueQuillSpell));
-
-        var redQuillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.SMELT, new Spell(VoidMorpheme.INSTANCE)));
-        var redQuill = LootItem.lootTableItem(RED_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), redQuillSpell));
+        var quillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE)));
+        var blueQuill = LootItem.lootTableItem(BLUE_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), quillSpell));
+        var redQuill = LootItem.lootTableItem(RED_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), quillSpell));
 
         var inkWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE));
         var inkWand = LootItem.lootTableItem(INK_WAND.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), inkWandSpell));

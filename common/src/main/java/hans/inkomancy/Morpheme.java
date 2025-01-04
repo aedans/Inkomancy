@@ -50,8 +50,7 @@ public abstract class Morpheme {
         StarMorpheme.INSTANCE,
         SwapMorpheme.INSTANCE,
         ToolMorpheme.INSTANCE,
-        TransmuteMorpheme.SMELT,
-        TransmuteMorpheme.CRAFT,
+        TransmuteMorpheme.INSTANCE,
         VoidMorpheme.INSTANCE
     };
   }
