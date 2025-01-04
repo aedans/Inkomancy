@@ -208,7 +208,6 @@ public final class Inkomancy {
         var mirror = LootItem.lootTableItem(MIRROR.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), mirrorSpell));
 
         var quillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE)));
-        var blueQuill = LootItem.lootTableItem(BLUE_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), quillSpell));
         var redQuill = LootItem.lootTableItem(RED_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), quillSpell));
 
         var inkWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE));
@@ -217,7 +216,7 @@ public final class Inkomancy {
         var flowerWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE)));
         var flowerWand = LootItem.lootTableItem(FLOWER_WAND.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), flowerWandSpell));
 
-        var items = List.of(spellScribe, mirror, blueQuill, redQuill, inkWand, flowerWand);
+        var items = List.of(spellScribe, mirror, redQuill, inkWand, flowerWand);
         var poolBuilder = LootPool.lootPool().add(EmptyLootItem.emptyItem().setWeight((items.size() + 1) * (tables.get(key) - 1)));
 
         for (var item : items) {
