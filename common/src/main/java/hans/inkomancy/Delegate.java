@@ -21,14 +21,14 @@ public interface Delegate<T> {
     set(f.apply(get()));
   }
 
-  static <T> Instance<T> of(T t) {
-    return new Instance<>(t);
+  static <T> Delegate.Of<T> of(T t) {
+    return new Delegate.Of<>(t);
   }
 
-  class Instance<T> implements Delegate<T> {
+  class Of<T> implements Delegate<T> {
     private T t;
 
-    private Instance(T t) {
+    private Of(T t) {
       this.t = t;
     }
 
@@ -55,7 +55,7 @@ public interface Delegate<T> {
     @Override
     public boolean equals(Object o) {
       if (o == null || getClass() != o.getClass()) return false;
-      Instance<?> delegate = (Instance<?>) o;
+      Of<?> delegate = (Of<?>) o;
       return Objects.equals(t, delegate.t);
     }
 

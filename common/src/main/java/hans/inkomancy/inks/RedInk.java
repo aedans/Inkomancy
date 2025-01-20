@@ -2,10 +2,10 @@ package hans.inkomancy.inks;
 
 import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Set;
 
@@ -38,7 +38,7 @@ public class RedInk extends Ink {
 
   @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
-    InteractableWorld.of(world).playParticles(DustParticleOptions.REDSTONE, pos.getBottomCenter(), new Vec3(.25, .25, .25), 3, 0);
+    EffectUtils.redstoneEffect(world, pos);
   }
 
   @Override

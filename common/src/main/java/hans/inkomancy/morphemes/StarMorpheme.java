@@ -1,10 +1,7 @@
 package hans.inkomancy.morphemes;
 
-import hans.inkomancy.InterpretError;
-import hans.inkomancy.Morpheme;
-import hans.inkomancy.Spell;
-import hans.inkomancy.SpellContext;
-import net.minecraft.sounds.SoundEvents;
+import hans.inkomancy.*;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 
 import java.util.Set;
 
@@ -17,10 +14,8 @@ public class StarMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    if (context.caster() != null) {
-      context.mana().consume(1);
-      context.world().throwProjectile(context.caster());
-      context.world().playSound(context.caster().blockPosition(), SoundEvents.INK_SAC_USE);
-    }
+    context.mana().consume(1);
+    ThrowableItemProjectile.spawnProjectileFromRotation(InkBallEntity::new, context.world(), Inkomancy.INK_BALL.get().getDefaultInstance(), context.caster(), 0, 1F, 1);
+    EffectUtils.inkEffect(context.world(), context.caster().blockPosition());
   }
 }

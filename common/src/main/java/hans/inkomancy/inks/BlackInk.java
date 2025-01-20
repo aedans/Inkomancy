@@ -2,12 +2,12 @@ package hans.inkomancy.inks;
 
 import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Set;
 
@@ -41,7 +41,7 @@ public class BlackInk extends Ink {
   @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
     world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
-    InteractableWorld.of(world).playParticles(ParticleTypes.SMOKE, pos.getBottomCenter(), new Vec3(.25, .25, .25), 5, 0);
+    EffectUtils.smokeEffect(world, pos);
   }
 
   @Override
