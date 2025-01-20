@@ -29,7 +29,7 @@ public class MagicItem extends Item {
       var spell = stack.get(Inkomancy.SPELL_COMPONENT_TYPE.get());
       if (spell != null) {
         var mana = new ManaProvider(ink, ink.getMana(Set.of()));
-        var context = new SpellContext(InteractableWorld.of(server), mana, new InteractableWorld.EntityRef.Instance<>(player), pos);
+        var context = new SpellContext(InteractableWorld.of(server), mana, player, pos);
         spell.morpheme().interpret(spell.base(), context);
         return true;
       }

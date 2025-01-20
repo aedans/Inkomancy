@@ -1,7 +1,5 @@
 package hans.inkomancy;
 
-import hans.inkomancy.inks.RedInk;
-
 public class ManaProvider {
   public Ink ink;
   public int current;
@@ -19,13 +17,5 @@ public class ManaProvider {
 
   public void produce(int amount) throws InterpretError {
     current = ink.modifyMana(initial, current, -amount);
-  }
-
-  public static ManaProvider infinite() {
-    return of(Integer.MAX_VALUE);
-  }
-
-  public static ManaProvider of(int mana) {
-    return new ManaProvider(RedInk.INSTANCE, mana);
   }
 }

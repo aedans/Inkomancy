@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -66,17 +65,15 @@ public record InteractableLevel(ServerLevel level) implements InteractableWorld 
   }
 
   @Override
-  public void throwProjectile(EntityRef<? extends LivingEntity> player) {
-    ThrowableItemProjectile.spawnProjectileFromRotation(InkBallEntity::new, level, Inkomancy.INK_BALL.get().getDefaultInstance(), player.get(), 0, 1F, 1);
+  public void throwProjectile(ServerPlayer player) {
+    ThrowableItemProjectile.spawnProjectileFromRotation(InkBallEntity::new, level, Inkomancy.INK_BALL.get().getDefaultInstance(), player, 0, 1F, 1);
   }
 
   @Override
-  public void teleport(BlockPos source, Vec3 target) {
-    for (var entity : getEntities(EntityTypeTest.forClass(Entity.class), Util.getBox(source), x -> true)) {
-      teleportEffect(entity);
-      entity.teleport(new TeleportTransition(level, target, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING));
-      teleportEffect(entity);
-    }
+  public void teleport(Entity entity, Vec3 target) {
+    teleportEffect(entity);
+    entity.teleport(new TeleportTransition(level, target, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING));
+    teleportEffect(entity);
   }
 
   public void teleportEffect(Entity entity) {
@@ -86,9 +83,9 @@ public record InteractableLevel(ServerLevel level) implements InteractableWorld 
   }
 
   @Override
-  public BlockPos getSpawn(@Nullable EntityRef<ServerPlayer> player) {
-    if (player != null && player.get().getRespawnPosition() != null) {
-      return player.get().getRespawnPosition();
+  public BlockPos getSpawn(@Nullable ServerPlayer player) {
+    if (player != null) {
+      return player.getRespawnPosition();
     } else {
       return level.getSharedSpawnPos();
     }
@@ -107,11 +104,6 @@ public record InteractableLevel(ServerLevel level) implements InteractableWorld 
   @Override
   public void removeEntity(Entity entity) {
     entity.kill(level);
-  }
-
-  @Override
-  public Morpheme.Position getPosition(EntityRef<? extends Entity> entityRef) {
-    return new Morpheme.Position(entityRef.get().position(), entityRef.get().blockPosition());
   }
 
   @Override

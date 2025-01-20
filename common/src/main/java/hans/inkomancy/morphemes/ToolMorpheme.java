@@ -40,7 +40,7 @@ public class ToolMorpheme extends Morpheme {
     return tools.stream().map(item -> {
       var stack = item.getDefaultInstance();
       stack.set(Inkomancy.CONJURED_COMPONENT_TYPE.get(), true);
-      return new Delegate.Instance<>(stack);
+      return Delegate.of(stack);
     }).toList();
   }
 

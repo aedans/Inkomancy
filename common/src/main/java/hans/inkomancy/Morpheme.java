@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -73,6 +74,10 @@ public abstract class Morpheme {
     throw new InterpretError.Conversion(this, Type.ITEMS);
   }
 
+  public List<? extends Delegate<? extends Entity>> interpretAsEntities(Spell spell, SpellContext context) throws InterpretError {
+    throw new InterpretError.Conversion(this, Type.ENTITIES);
+  }
+
   public List<Position> interpretAsPositions(Spell spell, SpellContext context) throws InterpretError {
     throw new InterpretError.Conversion(this, Type.POSITION);
   }
@@ -95,7 +100,7 @@ public abstract class Morpheme {
   }
 
   public enum Type {
-    SPELL, ITEMS, POSITION, ACTION
+    SPELL, ITEMS, ENTITIES, POSITION, ACTION
   }
 
   public interface Interpreter<T> {
