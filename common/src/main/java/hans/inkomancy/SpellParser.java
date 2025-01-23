@@ -73,11 +73,30 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
       if (ink.getBlock().canAttach(world.getBlockState(connector.pos()), transform)) {
         var localTransform = transform.withForwards(connector.dir());
         var glyphPos = connector.pos().relative(localTransform.forwards());
+        var connectorBlocks = new ArrayList<BlockPos>();
+        connectorBlocks.add(connector.pos());
+
+        while (true) {
+          if (Glyph.FORWARDS.test(world, glyphPos, localTransform, ink.getBlock())) {
+            connectorBlocks.add(glyphPos);
+            glyphPos = glyphPos.relative(localTransform.forwards());
+          } else if (Glyph.LEFT.test(world, glyphPos, localTransform, ink.getBlock())) {
+            connectorBlocks.add(glyphPos);
+            localTransform = localTransform.withForwards(localTransform.left());
+            glyphPos = glyphPos.relative(localTransform.forwards());
+          } else if (Glyph.RIGHT.test(world, glyphPos, localTransform, ink.getBlock())) {
+            connectorBlocks.add(glyphPos);
+            localTransform = localTransform.withForwards(localTransform.right());
+            glyphPos = glyphPos.relative(localTransform.forwards());
+          } else {
+            break;
+          }
+        }
 
         for (var glyph : Glyph.GLYPHS) {
           if (glyph.test(world, glyphPos, localTransform, ink.getBlock())) {
-            blocks.add(connector.pos());
-            spell.connected().add(parseSpell(glyphPos, connector.dir(), glyph, blocks, depth + 1));
+            blocks.addAll(connectorBlocks);
+            spell.connected().add(parseSpell(glyphPos, localTransform.forwards(), glyph, blocks, depth + 1));
             break;
           }
         }

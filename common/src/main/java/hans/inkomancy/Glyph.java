@@ -11,11 +11,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record Glyph(Morpheme morpheme, int width, int height, int center, boolean[] values) {
+public record Glyph(Morpheme morpheme, int width, int height, int center, int[] values) {
   public static final Glyph START = Glyph.create(SourceMorpheme.INSTANCE, 1, """
       +_+
       +_+
       +++
+      """);
+
+  public static final Glyph FORWARDS = Glyph.create(ContinueMorpheme.INSTANCE, 1, """
+      _+_
+      """);
+
+  public static final Glyph LEFT = Glyph.create(ContinueMorpheme.INSTANCE, 0, """
+      _?
+      +_
+      """);
+
+  public static final Glyph RIGHT = Glyph.create(ContinueMorpheme.INSTANCE, 1, """
+      ?_
+      _+
       """);
 
   public static final List<Glyph> GLYPHS = new ArrayList<>(List.of(
@@ -131,7 +145,8 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
       Glyph.create(ReadMorpheme.INSTANCE, 1, """
           +++
           +++
-          """)));
+          """)
+  ));
 
   static {
     var manifestGlyphs = new ArrayList<Glyph>();
@@ -139,16 +154,16 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
     for (var glyph : GLYPHS) {
       var width = glyph.width + 4;
       var height = glyph.height + 4;
-      var values = new boolean[width * height];
+      var values = new int[width * height];
       for (var col = 0; col < width; col++) {
         for (var row = 0; row < height; row++) {
           var i = col + row * width;
           if (col == 0 || col == width - 1 || row == 0 || row == height - 1) {
-            values[i] = true;
+            values[i] = 1;
           } else if (col >= 2 && col <= width - 3 && row >= 2 && row <= height - 3) {
             values[i] = glyph.valueAt(row - 2, col - 2);
           } else {
-            values[i] = false;
+            values[i] = 0;
           }
         }
       }
@@ -170,7 +185,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
     }
   }
 
-  public boolean valueAt(int row, int col) {
+  public int valueAt(int row, int col) {
     return values[col + row * width];
   }
 
@@ -182,7 +197,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
     var blocks = new ArrayList<BlockPos>();
     for (var col = 0; col < width; col++) {
       for (var row = 0; row < height; row++) {
-        if (valueAt(row, col)) {
+        if (valueAt(row, col) == 1) {
           blocks.add(localToBlockPos(rootPos, transform, row, col));
         }
       }
@@ -194,7 +209,11 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
     for (var col = 0; col < width; col++) {
       for (var row = 0; row < height; row++) {
         var pos = localToBlockPos(rootPos, transform, row, col);
-        if (block.canAttach(world.getBlockState(pos), transform) != valueAt(row, col)) {
+        if (valueAt(row, col) == 2) {
+          continue;
+        }
+
+        if (block.canAttach(world.getBlockState(pos), transform) != (valueAt(row, col) == 1)) {
           return false;
         }
       }
@@ -207,31 +226,31 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
     var list = new ArrayList<Connector>();
 
     for (var col = center; col >= 0; col--) {
-      if (valueAt(0, col)) {
+      if (valueAt(0, col)  == 1) {
         list.add(new Connector(localToBlockPos(rootPos, transform, -1, col), transform.backwards()));
       }
     }
 
     for (var row = 0; row < height; row++) {
-      if (valueAt(row, 0)) {
+      if (valueAt(row, 0) == 1) {
         list.add(new Connector(localToBlockPos(rootPos, transform, row, -1), transform.left()));
       }
     }
 
     for (var col = 0; col < width; col++) {
-      if (valueAt(height - 1, col)) {
+      if (valueAt(height - 1, col) == 1) {
         list.add(new Connector(localToBlockPos(rootPos, transform, height, col), transform.forwards()));
       }
     }
 
     for (var row = height - 1; row >= 0; row--) {
-      if (valueAt(row, width - 1)) {
+      if (valueAt(row, width - 1) == 1) {
         list.add(new Connector(localToBlockPos(rootPos, transform, row, width), transform.right()));
       }
     }
 
     for (var col = width - 1; col > center; col--) {
-      if (valueAt(0, col)) {
+      if (valueAt(0, col) == 1) {
         list.add(new Connector(localToBlockPos(rootPos, transform, -1, col), transform.backwards()));
       }
     }
@@ -247,7 +266,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
   }
 
   public static Glyph create(Morpheme morpheme, int center, String s) {
-    var values = new ArrayList<Boolean>();
+    var values = new ArrayList<Integer>();
     var rows = s.split("\n");
     var height = 0;
     var length = 0;
@@ -260,22 +279,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, boolea
       var chars = row.toCharArray();
       for (var i = chars.length - 1; i >= 0; i--) {
         length++;
-        values.addFirst(chars[i] == '+');
+        values.addFirst(chars[i] == '_' ? 0 : chars[i] == '+' ? 1 : 2);
       }
 
       height++;
     }
 
-    return new Glyph(morpheme, length / height, height, center, toPrimitiveArray(values));
-  }
-
-  // https://stackoverflow.com/a/5615737
-  private static boolean[] toPrimitiveArray(final List<Boolean> booleanList) {
-    final boolean[] primitives = new boolean[booleanList.size()];
-    int index = 0;
-    for (Boolean object : booleanList) {
-      primitives[index++] = object;
-    }
-    return primitives;
+    return new Glyph(morpheme, length / height, height, center, values.stream().mapToInt(x -> x).toArray());
   }
 }
