@@ -25,7 +25,7 @@ public class SwapMorpheme extends Morpheme {
         .stream().flatMap(List::stream).collect(Collectors.toList());
 
     if (sources.isEmpty() && context.caster() != null) {
-      sources.add(Delegate.of(context.caster()));
+      sources.add(new Delegate.Instance<>(context.caster()));
     }
 
     if (targets.isEmpty()) {

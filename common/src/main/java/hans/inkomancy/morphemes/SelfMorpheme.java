@@ -18,6 +18,6 @@ public class SelfMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<? extends Entity>> interpretAsEntities(Spell spell, SpellContext context) {
-    return List.of(Delegate.of(context.caster()));
+    return List.of(new Delegate.Instance<>(context.caster()));
   }
 }
