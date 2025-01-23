@@ -2,15 +2,11 @@ package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Set;
@@ -80,9 +76,7 @@ public class VoidMorpheme extends Morpheme {
     public void action(boolean replace) {
       if (replace) {
         entity.kill(context.world());
-        var particle = new ItemParticleOption(ParticleTypes.ITEM, entity.getItem());
-        context.playParticles(particle, entity.position(), Vec3.ZERO, 10, .1);
-        context.playSound(entity.blockPosition(), SoundEvents.ITEM_BREAK);
+        EffectUtils.destroyEffect(context.world(), entity);
       }
     }
   }

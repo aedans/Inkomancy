@@ -71,14 +71,9 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
   public InteractionResult use(BlockState state, BlockPos pos, Level world, @Nullable Player player) {
     if (world instanceof ServerLevel server && (player == null || player instanceof ServerPlayer)) {
       var ink = Ink.getBy(Ink::getBlock, this);
-      var parser = new SpellParser(server, Transform2D.of(state.getValue(FACING)), ink);
-      var connected = parser.connectedBlocks(pos);
-      if (connected.size() > 1000) {
-        for (var block : connected) {
-          ink.handleInvalidBlock(parser, block);
-        }
-        return InteractionResult.CONSUME;
-      }
+      var transform = Transform2D.of(state.getValue(FACING));
+      var parser = new SpellParser(server, ink);
+      var connected = parser.connectedBlocks(pos, transform);
 
       var start = parser.findStart(connected);
       if (start == null) {
@@ -86,8 +81,8 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
       }
 
       var blocks = new LinkedHashSet<BlockPos>();
-      var spell = parser.parseSpell(start.getFirst(), start.getSecond(), Glyph.START, blocks, 0);
-      parser.handleInvalidBlocks(connected, blocks);
+      var facing = world.getBlockState(start.getFirst()).getValue(InkBlock.FACING);
+      var spell = parser.parseSpell(start.getFirst(), Transform2D.of(facing, start.getSecond()), Glyph.START, blocks, 0);
 
       var mana = new ManaProvider(ink, ink.getMana(blocks));
       var context = new SpellContext(server, (ServerPlayer) player, null, ink, mana);

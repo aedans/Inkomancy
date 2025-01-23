@@ -32,6 +32,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
       _+
       """);
 
+  public static final Glyph ACTIVATE = Glyph.create(ContinueMorpheme.INSTANCE, 2, """
+      ?_?_?
+      _+_+_
+      _+++_
+      """);
+
   public static final List<Glyph> GLYPHS = new ArrayList<>(List.of(
       Glyph.create(BetweenMorpheme.INSTANCE, 0, """
           _++_

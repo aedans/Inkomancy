@@ -5,20 +5,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
-public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
-  public Set<BlockPos> connectedBlocks(BlockPos initial) {
+public record SpellParser(ServerLevel world, Ink ink) {
+  public Set<BlockPos> connectedBlocks(BlockPos initial, Transform2D transform) {
     var toScan = new LinkedHashSet<BlockPos>();
     var scanned = new HashSet<BlockPos>();
     var connected = new HashSet<BlockPos>();
     toScan.add(initial);
 
     while (!toScan.isEmpty()) {
-      BlockPos current = toScan.removeFirst();
+      var current = toScan.removeFirst();
       scanned.add(current);
 
       if (!ink.getBlock().canAttach(world.getBlockState(current), transform)) {
@@ -41,6 +38,7 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
   public Pair<BlockPos, Direction> findStart(Set<BlockPos> connected) {
     var starts = new ArrayList<Pair<BlockPos, Direction>>();
     for (var current : connected) {
+      var transform = Transform2D.of(world.getBlockState(current).getValue(InkBlock.FACING));
       for (var direction : transform.directions()) {
         if (Glyph.START.test(world, current, transform.withForwards(direction), ink.getBlock())) {
           starts.add(new Pair<>(current, direction));
@@ -55,18 +53,24 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
     }
   }
 
-  public Spell parseSpell(BlockPos rootPos, Direction forwards, Glyph parentGlyph, LinkedHashSet<BlockPos> blocks, int depth) {
-    var spell = new Spell(parentGlyph.morpheme(), new ArrayList<>(), rootPos, forwards);
-    var forwardsTransform = transform.withForwards(forwards);
+  public Spell parseSpell(BlockPos rootPos, Transform2D transform, Glyph parentGlyph, LinkedHashSet<BlockPos> blocks, int depth) {
+    var spell = new Spell(parentGlyph.morpheme(), new ArrayList<>(), rootPos, transform.forwards());
 
-    blocks.addAll(parentGlyph.blocks(rootPos, forwardsTransform));
+    blocks.addAll(parentGlyph.blocks(rootPos, transform));
 
-    if (depth >= 100) {
-      return spell;
+    if (parentGlyph == Glyph.ACTIVATE) {
+      var activated = rootPos.relative(transform.forwards());
+      var state = world.getBlockState(activated);
+      if (state.is(ink.getBlock())) {
+        var localTransform = Transform2D.of(state.getValue(InkBlock.FACING));
+        spell.connected().addAll(parseSpell(activated.relative(transform.facing().getOpposite()), localTransform.withForwards(transform.facing()), Glyph.FORWARDS, blocks, depth + 1).connected());
+        spell.connected().addAll(parseSpell(activated.relative(transform.facing()), localTransform.withForwards(transform.facing().getOpposite()), Glyph.FORWARDS, blocks, depth + 1).connected());
+        return spell;
+      }
     }
 
-    for (var connector : parentGlyph.getConnectors(rootPos, forwardsTransform)) {
-      if (depth > 0 && connector.dir().getOpposite() == forwards) {
+    for (var connector : parentGlyph.getConnectors(rootPos, transform)) {
+      if (depth > 0 && connector.dir().getOpposite() == transform.forwards()) {
         continue;
       }
 
@@ -93,10 +97,16 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
           }
         }
 
+        if (Glyph.ACTIVATE.test(world, glyphPos, localTransform, ink.getBlock())) {
+          blocks.addAll(connectorBlocks);
+          spell.connected().addAll(parseSpell(glyphPos, localTransform, Glyph.ACTIVATE, blocks, depth + 1).connected());
+          continue;
+        }
+
         for (var glyph : Glyph.GLYPHS) {
           if (glyph.test(world, glyphPos, localTransform, ink.getBlock())) {
             blocks.addAll(connectorBlocks);
-            spell.connected().add(parseSpell(glyphPos, localTransform.forwards(), glyph, blocks, depth + 1));
+            spell.connected().add(parseSpell(glyphPos, localTransform, glyph, blocks, depth + 1));
             break;
           }
         }
@@ -104,13 +114,5 @@ public record SpellParser(ServerLevel world, Transform2D transform, Ink ink) {
     }
 
     return spell;
-  }
-
-  public void handleInvalidBlocks(Set<BlockPos> connected, Set<BlockPos> blocks) {
-    for (var block : connected) {
-      if (!blocks.contains(block)) {
-        ink.handleInvalidBlock(this, block);
-      }
-    }
   }
 }

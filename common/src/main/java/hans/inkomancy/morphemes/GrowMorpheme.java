@@ -1,14 +1,8 @@
 package hans.inkomancy.morphemes;
 
-import hans.inkomancy.InterpretError;
-import hans.inkomancy.Morpheme;
-import hans.inkomancy.Spell;
-import hans.inkomancy.SpellContext;
+import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,8 +30,7 @@ public class GrowMorpheme extends Morpheme {
               && fertilizable.isBonemealSuccess(context.world(), context.world().random, pos, state)) {
             context.mana().consume(16);
             fertilizable.performBonemeal(context.world(), context.world().random, pos, state);
-            context.playParticles(ParticleTypes.HAPPY_VILLAGER, pos.getBottomCenter().add(.5, .25, .5), new Vec3(.25, .25, .25), 10, 0);
-            context.playSound(pos, SoundEvents.BONE_MEAL_USE);
+            EffectUtils.growEffect(context.world(), pos);
             break;
           }
         }

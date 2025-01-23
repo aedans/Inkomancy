@@ -6,8 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Set;
 
@@ -31,11 +29,6 @@ public class BlackInk extends Ink {
       throw new InterpretError.OOM();
     }
     return mana;
-  }
-
-  @Override
-  public void handleInvalidBlock(SpellParser parser, BlockPos pos) {
-    parser.world().destroyBlock(pos, true);
   }
 
   @Override

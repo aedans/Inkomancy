@@ -26,11 +26,6 @@ public class VoidInk extends Ink {
   }
 
   @Override
-  public void handleInvalidBlock(SpellParser parser, BlockPos pos) {
-    parser.world().destroyBlock(pos, true);
-  }
-
-  @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
 
   }

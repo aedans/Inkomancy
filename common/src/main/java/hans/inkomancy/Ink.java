@@ -62,8 +62,6 @@ public abstract class Ink {
 
   public abstract int modifyMana(int initial, int mana, int amount) throws InterpretError;
 
-  public abstract void handleInvalidBlock(SpellParser parser, BlockPos pos);
-
   public abstract void handleBlock(ServerLevel world, BlockPos pos);
 
   public abstract String lore();
