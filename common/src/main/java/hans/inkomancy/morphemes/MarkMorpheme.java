@@ -16,6 +16,6 @@ public class MarkMorpheme extends Morpheme {
 
   @Override
   public List<Position> interpretAsPositions(Spell spell, SpellContext context) {
-    return List.of(new Position(context.getPosition(spell, 0)));
+    return List.of(new Position(context.getPosition(spell, 1)));
   }
 }

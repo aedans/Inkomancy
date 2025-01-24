@@ -65,6 +65,7 @@ public record SpellParser(ServerLevel world, Ink ink) {
         var localTransform = Transform2D.of(state.getValue(InkBlock.FACING));
         spell.connected().addAll(parseSpell(activated.relative(transform.facing().getOpposite()), localTransform.withForwards(transform.facing()), Glyph.FORWARDS, blocks, depth + 1).connected());
         spell.connected().addAll(parseSpell(activated.relative(transform.facing()), localTransform.withForwards(transform.facing().getOpposite()), Glyph.FORWARDS, blocks, depth + 1).connected());
+        spell.connected().addAll(parseSpell(activated.relative(transform.backwards()), localTransform.withForwards(transform.forwards()), Glyph.FORWARDS, blocks, depth + 1).connected());
         return spell;
       }
 

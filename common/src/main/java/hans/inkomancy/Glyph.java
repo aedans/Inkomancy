@@ -41,8 +41,9 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
   public static final List<Glyph> GLYPHS = new ArrayList<>(List.of(
       Glyph.create(MarkMorpheme.INSTANCE, 2, """
           ?_+_?
-          __+__
-          +++++
+          _+++_
+          ++_++
+          _+++_
           """),
       Glyph.create(BetweenMorpheme.INSTANCE, 0, """
           _++_
