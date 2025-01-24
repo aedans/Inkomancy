@@ -35,7 +35,7 @@ public class TransmuteMorpheme extends Morpheme {
     if (match.isPresent()) {
       context.mana().consume(mana * target.get().getCount());
       target.modify(item -> match.get().value().assemble(inventory, context.world().registryAccess()).copyWithCount(item.getCount()));
-      EffectUtils.transmuteEffect(context.world(), context.getPosition(spell));
+      EffectUtils.transmuteEffect(context.world(), context.getPosition(spell, 1));
     }
     return match.isPresent();
   }

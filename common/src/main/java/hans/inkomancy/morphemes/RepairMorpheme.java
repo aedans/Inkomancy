@@ -1,6 +1,5 @@
 package hans.inkomancy.morphemes;
 
-import net.minecraft.sounds.SoundEvents;
 import hans.inkomancy.*;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class RepairMorpheme extends Morpheme {
         .stream().flatMap(List::stream).toList();
     for (var item : items) {
       if (item.get().isDamaged()) {
-        EffectUtils.repairEffect(context.world(), context.getPosition(spell));
+        EffectUtils.repairEffect(context.world(), context.getPosition(spell, 1));
         var toRepair = Math.min(item.get().getDamageValue(), context.mana().current);
         context.mana().consume(toRepair);
         item.update(stack -> stack.setDamageValue(stack.getDamageValue() - toRepair));

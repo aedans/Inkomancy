@@ -37,7 +37,7 @@ public class BreakMorpheme extends Morpheme {
       try {
         context.mana().consume(1 + (int) (context.world().getBlockState(pos).getDestroySpeed(context.world(), pos) * 10));
         var items = context.world().getBlockState(pos).getDrops(new LootParams.Builder(context.world())
-            .withParameter(LootContextParams.ORIGIN, context.getPosition(spell).getCenter())
+            .withParameter(LootContextParams.ORIGIN, context.getPosition(spell, 1).getCenter())
             .withParameter(LootContextParams.TOOL, ItemStack.EMPTY));
         drops.addAll(items.stream().map(item -> new BlockItemDelegate(context, item, pos, drop)).toList());
       } catch (Exception ignored) {

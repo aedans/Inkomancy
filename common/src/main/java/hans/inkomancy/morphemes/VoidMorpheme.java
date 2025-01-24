@@ -1,7 +1,6 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,7 @@ public class VoidMorpheme extends Morpheme {
   public static final VoidMorpheme INSTANCE = new VoidMorpheme();
 
   private VoidMorpheme() {
-    super("void", Set.of(Type.ENTITIES, Type.ITEMS, Type.POSITION, Type.ACTION));
+    super("void", Set.of(Type.ENTITIES, Type.ITEMS, Type.ACTION));
   }
 
   @Override
@@ -33,21 +32,8 @@ public class VoidMorpheme extends Morpheme {
   }
 
   @Override
-  public List<Position> interpretAsPositions(Spell spell, SpellContext context) {
-    var items = interpretAsItems(spell, context);
-    for (var item : items) {
-      var tracker = item.get().get(DataComponents.LODESTONE_TRACKER);
-      if (tracker != null && tracker.target().isPresent()) {
-        return List.of(new Position(tracker.target().get().pos()));
-      }
-    }
-
-    return List.of(new Position(context.getPosition(spell)));
-  }
-
-  @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var pos = context.getPosition(spell).getCenter();
+    var pos = context.getPosition(spell, 1).getCenter();
 
     var items = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
@@ -58,7 +44,7 @@ public class VoidMorpheme extends Morpheme {
   }
 
   public AABB getBox(Spell spell, SpellContext context) {
-    var position = context.getPosition(spell);
+    var position = context.getPosition(spell, 1);
     return AABB.encapsulatingFullBlocks(position.offset(-1, -1, -1), position.offset(1, 1, 1));
   }
 
