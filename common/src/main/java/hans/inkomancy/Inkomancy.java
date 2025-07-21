@@ -161,8 +161,8 @@ public final class Inkomancy {
     items.add(INK_HELPER.get());
     items.add(INK_BALL.get());
 
-    for (var mopheme : Morpheme.getMorphemes()) {
-      items.add(mopheme.getItem());
+    for (var morpheme : Morpheme.getMorphemes()) {
+      items.add(morpheme.getItem());
     }
 
     return items;
