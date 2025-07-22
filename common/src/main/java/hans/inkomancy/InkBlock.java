@@ -15,9 +15,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -32,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-public class InkBlock extends DirectionalBlock implements EntityBlock {
+public class InkBlock extends DirectionalBlock {
   public static final MapCodec<InkBlock> CODEC = BlockBehaviour.simpleCodec(InkBlock::new);
   public static final BooleanProperty NORTH_INK_CONNECTION = BooleanProperty.create("north");
   public static final BooleanProperty EAST_INK_CONNECTION = BooleanProperty.create("east");
@@ -88,11 +85,8 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
       var context = new SpellContext(server, (ServerPlayer) player, null, ink, mana);
       spell.morpheme().interpret(spell, context);
 
-      var i = 3;
       for (var block : blocks) {
-        if (world.getBlockEntity(block) instanceof InkBlockEntity entity && entity.ticks == 0) {
-          entity.ticks = i++ / 3;
-        }
+        Ink.getBy(Ink::getBlock, InkBlock.this).handleBlock(server, block);
       }
     }
 
@@ -108,27 +102,6 @@ public class InkBlock extends DirectionalBlock implements EntityBlock {
     }
 
     return use(state, pos, world, player);
-  }
-
-  @Override
-  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-    return new InkBlockEntity(Ink.getBy(Ink::getBlock, this).getBlockEntity(), pos, state);
-  }
-
-  @Override
-  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level w, BlockState s, BlockEntityType<T> type) {
-    return (Level world, BlockPos pos, BlockState state, T blockEntity) -> {
-      if (blockEntity instanceof InkBlockEntity entity) {
-        if (entity.ticks == 1) {
-          entity.ticks--;
-          if (world instanceof ServerLevel server) {
-            Ink.getBy(Ink::getBlock, InkBlock.this).handleBlock(server, pos);
-          }
-        } else if (entity.ticks > 1) {
-          entity.ticks--;
-        }
-      }
-    };
   }
 
   @Override

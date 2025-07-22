@@ -33,7 +33,7 @@ public class BlackInk extends Ink {
 
   @Override
   public void handleBlock(ServerLevel world, BlockPos pos) {
-    world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+    world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     EffectUtils.smokeEffect(world, pos);
   }
 

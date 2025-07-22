@@ -3,14 +3,12 @@ package hans.inkomancy;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import dev.architectury.event.events.common.LootEvent;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 import hans.inkomancy.inks.BlackInk;
 import hans.inkomancy.inks.RedInk;
 import hans.inkomancy.morphemes.*;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -25,10 +23,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -46,21 +41,10 @@ import java.util.function.Supplier;
 public final class Inkomancy {
   public static final String MOD_ID = "inkomancy";
 
-  @FunctionalInterface
-  public interface Factory<T extends BlockEntity> {
-    T create(BlockPos var1, BlockState var2);
-  }
-
-  @ExpectPlatform
-  public static <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(Factory<T> factory, Block... blocks) {
-    throw new AssertionError();
-  }
-
   public static final Supplier<RegistrarManager> MANAGER = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
   public static final Registrar<Item> ITEMS = MANAGER.get().get(Registries.ITEM);
   public static final Registrar<Block> BLOCKS = MANAGER.get().get(Registries.BLOCK);
   public static final Registrar<EntityType<?>> ENTITY_TYPE = MANAGER.get().get(Registries.ENTITY_TYPE);
-  public static final Registrar<BlockEntityType<?>> BLOCK_ENTITY_TYPE = MANAGER.get().get(Registries.BLOCK_ENTITY_TYPE);
   public static final Registrar<DataComponentType<?>> DATA_COMPONENT_TYPE = MANAGER.get().get(Registries.DATA_COMPONENT_TYPE);
   public static final Registrar<RecipeSerializer<?>> RECIPE_SERIALIZER = MANAGER.get().get(Registries.RECIPE_SERIALIZER);
   public static final Registrar<RecipeType<?>> RECIPE_TYPE = MANAGER.get().get(Registries.RECIPE_TYPE);
@@ -97,11 +81,6 @@ public final class Inkomancy {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink");
     var key = ResourceKey.create(Registries.ITEM, rl);
     return ITEMS.register(rl, () -> new InkItem(ink.getBlock(), itemSettings(key)));
-  }
-
-  public static RegistrySupplier<BlockEntityType<InkBlockEntity>> registerInkBlockEntity(Ink ink) {
-    return BLOCK_ENTITY_TYPE.register(ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink"),
-        () -> createBlockEntityType((pos, state) -> new InkBlockEntity(ink.getBlockEntity(), pos, state), ink.getBlock()));
   }
 
   public static RegistrySupplier<MorphemeItem> registerMorphemeItem(Morpheme morpheme) {
