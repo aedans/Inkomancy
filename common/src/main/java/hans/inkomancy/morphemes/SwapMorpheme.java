@@ -42,7 +42,7 @@ public class SwapMorpheme extends Morpheme {
     }
 
     for (var source : sources) {
-      var target = Util.randomOf(targets).absolute();
+      var target = Util.randomOf(targets).absolute().add(0, .5, 0);
       var distance = Math.sqrt(source.get().blockPosition().distToCenterSqr(target));
       context.mana().consume((int) distance);
       source.update(entity ->

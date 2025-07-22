@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -84,6 +85,8 @@ public class InkBlock extends DirectionalBlock {
       var mana = new ManaProvider(ink, ink.getMana(blocks));
       var context = new SpellContext(server, (ServerPlayer) player, null, ink, mana);
       spell.morpheme().interpret(spell, context);
+
+      world.playSound(null, pos, ink.sound(), SoundSource.BLOCKS);
 
       for (var block : blocks) {
         Ink.getBy(Ink::getBlock, InkBlock.this).handleBlock(server, block);

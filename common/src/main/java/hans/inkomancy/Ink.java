@@ -6,6 +6,7 @@ import hans.inkomancy.inks.RedInk;
 import hans.inkomancy.inks.VoidInk;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ToolMaterial;
 
 import java.util.Set;
@@ -50,6 +51,8 @@ public abstract class Ink {
   public InkItem getItem() {
     return item.get();
   }
+
+  public abstract SoundEvent sound();
 
   public abstract int getMana(Set<BlockPos> blocks);
 

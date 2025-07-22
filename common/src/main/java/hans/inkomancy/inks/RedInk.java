@@ -3,6 +3,8 @@ package hans.inkomancy.inks;
 import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ToolMaterial;
 
 import java.util.Set;
@@ -13,6 +15,11 @@ public class RedInk extends Ink {
 
   private RedInk() {
     super("red");
+  }
+
+  @Override
+  public SoundEvent sound() {
+    return SoundEvents.REDSTONE_TORCH_BURNOUT;
   }
 
   @Override

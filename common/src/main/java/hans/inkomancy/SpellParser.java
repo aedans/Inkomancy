@@ -58,6 +58,10 @@ public record SpellParser(ServerLevel world, Ink ink) {
 
     blocks.addAll(parentGlyph.blocks(rootPos, transform));
 
+    if (depth >= 1000) {
+      return spell;
+    }
+
     if (parentGlyph == Glyph.ACTIVATE) {
       var activated = rootPos.relative(transform.forwards());
       var state = world.getBlockState(activated);

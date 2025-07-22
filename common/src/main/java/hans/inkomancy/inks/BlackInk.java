@@ -3,6 +3,8 @@ package hans.inkomancy.inks;
 import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -15,6 +17,11 @@ public class BlackInk extends Ink {
 
   private BlackInk() {
     super("black");
+  }
+
+  @Override
+  public SoundEvent sound() {
+    return SoundEvents.FIRECHARGE_USE;
   }
 
   @Override
