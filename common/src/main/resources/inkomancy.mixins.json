@@ -7,7 +7,8 @@
     "ItemRendererMixin"
   ],
   "mixins": [
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "PrimaryLevelDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1

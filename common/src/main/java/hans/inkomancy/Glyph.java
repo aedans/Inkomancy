@@ -13,8 +13,9 @@ import java.util.Map;
 
 public record Glyph(Morpheme morpheme, int width, int height, int center, int[] values) {
   public static final Glyph START = Glyph.create(SourceMorpheme.INSTANCE, 1, """
-      +_+
-      +_+
+      +++
+      _+_
+      _+_
       +++
       """);
 
@@ -117,9 +118,19 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
           ++_
           ++_
           """),
-      Glyph.create(VoidMorpheme.INSTANCE, 1, """
+      Glyph.create(HoleMorpheme.INSTANCE, 1, """
           +++
           +_+
+          +++
+          """),
+      Glyph.create(VoidMorpheme.INSTANCE, 1, """
+          +++
+          _++
+          +++
+          """),
+      Glyph.create(VoidMorpheme.INSTANCE, 1, """
+          +++
+          ++_
           +++
           """),
       Glyph.create(BreakMorpheme.INSTANCE, 1, """

@@ -44,6 +44,7 @@ public abstract class Morpheme {
         BreakMorpheme.INSTANCE,
         ForeverMorpheme.INSTANCE,
         GrowMorpheme.INSTANCE,
+        HoleMorpheme.INSTANCE,
         MarkMorpheme.INSTANCE,
         ReadMorpheme.INSTANCE,
         RepairMorpheme.INSTANCE,

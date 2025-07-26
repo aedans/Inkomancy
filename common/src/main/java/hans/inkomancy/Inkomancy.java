@@ -186,13 +186,13 @@ public final class Inkomancy {
         var mirrorSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE));
         var mirror = LootItem.lootTableItem(MIRROR.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), mirrorSpell));
 
-        var quillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE)));
+        var quillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)));
         var redQuill = LootItem.lootTableItem(RED_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), quillSpell));
 
         var inkWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE));
         var inkWand = LootItem.lootTableItem(INK_WAND.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), inkWandSpell));
 
-        var flowerWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE)));
+        var flowerWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)));
         var flowerWand = LootItem.lootTableItem(FLOWER_WAND.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), flowerWandSpell));
 
         var items = List.of(spellScribe, mirror, redQuill, inkWand, flowerWand);
