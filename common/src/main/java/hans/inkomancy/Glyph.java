@@ -19,8 +19,8 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
   }
 
   public static final Glyph START = Glyph.create(SourceMorpheme.INSTANCE, 1, """
-      ++_
-      +_+
+      +++
+      +++
       +++
       """);
 
@@ -129,34 +129,19 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           +++
           """),
       Glyph.create(VoidMorpheme.INSTANCE, 1, """
-          +++
-          _++
-          +++
-          """),
-      Glyph.create(VoidMorpheme.INSTANCE, 1, """
-          +++
-          ++_
+          +_+
+          +_+
           +++
           """),
-      Glyph.create(BreakMorpheme.INSTANCE, 1, """
+      Glyph.create(BreakMorpheme.INSTANCE, 2, """
           +++
           +++
           _++
           """),
-      Glyph.create(BreakMorpheme.INSTANCE, 1, """
+      Glyph.create(BreakMorpheme.INSTANCE, 0, """
           +++
           +++
           ++_
-          """),
-      Glyph.create(BreakMorpheme.INSTANCE, 1, """
-          ++_
-          +++
-          +++
-          """),
-      Glyph.create(BreakMorpheme.INSTANCE, 1, """
-          _++
-          +++
-          +++
           """),
       Glyph.create(ToolMorpheme.INSTANCE, 1, """
           +++
