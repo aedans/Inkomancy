@@ -26,7 +26,7 @@ public class VoidMorpheme extends Morpheme {
         .stream().flatMap(List::stream).toList();
     for (var item : items) {
       server.inkomancy$getVoidContainer().addItem(item.get());
-      item.action(false);
+      item.destroy();
     }
   }
 }

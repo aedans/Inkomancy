@@ -9,7 +9,7 @@ public interface Delegate<T> {
 
   void set(T modified);
 
-  void action(boolean replace);
+  void destroy();
 
   default void update(Consumer<T> f) {
     var t = get();
@@ -39,7 +39,7 @@ public interface Delegate<T> {
     }
 
     @Override
-    public void action(boolean replace) {
+    public void destroy() {
 
     }
 

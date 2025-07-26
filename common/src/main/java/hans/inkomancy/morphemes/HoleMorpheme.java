@@ -38,8 +38,10 @@ public class HoleMorpheme extends Morpheme {
     var items = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
     for (var delegate : items) {
-      context.world().addFreshEntity(new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get()));
-      delegate.action(true);
+      var entity = new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get());
+      context.world().addFreshEntity(entity);
+      EffectUtils.magicEffect(context.world(), entity.position());
+      delegate.destroy();
     }
   }
 
@@ -59,11 +61,9 @@ public class HoleMorpheme extends Morpheme {
     }
 
     @Override
-    public void action(boolean replace) {
-      if (replace) {
-        entity.kill(context.world());
-        EffectUtils.destroyEffect(context.world(), entity);
-      }
+    public void destroy() {
+      entity.kill(context.world());
+      EffectUtils.magicEffect(context.world(), entity.position());
     }
   }
 }

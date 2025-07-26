@@ -12,7 +12,7 @@ public class MatchMorpheme extends Morpheme {
   public static final MatchMorpheme INSTANCE = new MatchMorpheme();
 
   private MatchMorpheme() {
-    super("match", Set.of(Type.ITEMS, Type.ACTION));
+    super("match", Set.of(Type.ITEMS));
   }
 
   @Override
@@ -24,12 +24,5 @@ public class MatchMorpheme extends Morpheme {
     }
 
     return inputs.stream().flatMap(Collection::stream).filter(d -> items.contains(d.get().getItem())).toList();
-  }
-
-  @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    for (var delegate : interpretAsItems(spell, context)) {
-      delegate.action(false);
-    }
   }
 }

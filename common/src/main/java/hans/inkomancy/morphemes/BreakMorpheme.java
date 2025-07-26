@@ -18,17 +18,17 @@ public class BreakMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    return interpretBreak(spell, context, false);
+    return interpretBreak(spell, context);
   }
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    for (var delegate : interpretBreak(spell, context, true)) {
-      delegate.action(false);
+    for (var delegate : interpretBreak(spell, context)) {
+      context.world().destroyBlock(delegate.pos, true);
     }
   }
 
-  public List<BlockItemDelegate> interpretBreak(Spell spell, SpellContext context, boolean drop) throws InterpretError {
+  public List<BlockItemDelegate> interpretBreak(Spell spell, SpellContext context) throws InterpretError {
     var positions = new Args(spell, context).get(Type.POSITION, m -> m::interpretAsPositions)
         .stream().flatMap(Collection::stream).map(Position::blockPos).collect(Collectors.toList());
     Collections.shuffle(positions);
@@ -39,7 +39,7 @@ public class BreakMorpheme extends Morpheme {
         var items = context.world().getBlockState(pos).getDrops(new LootParams.Builder(context.world())
             .withParameter(LootContextParams.ORIGIN, context.getPosition(spell, 1).getCenter())
             .withParameter(LootContextParams.TOOL, ItemStack.EMPTY));
-        drops.addAll(items.stream().map(item -> new BlockItemDelegate(context, item, pos, drop)).toList());
+        drops.addAll(items.stream().map(item -> new BlockItemDelegate(context, item, pos)).toList());
       } catch (Exception ignored) {
         break;
       }
@@ -47,7 +47,7 @@ public class BreakMorpheme extends Morpheme {
     return drops;
   }
 
-  public record BlockItemDelegate(SpellContext context, ItemStack item, BlockPos pos, boolean drop) implements Delegate<ItemStack> {
+  public record BlockItemDelegate(SpellContext context, ItemStack item, BlockPos pos) implements Delegate<ItemStack> {
     @Override
     public ItemStack get() {
       return item;
@@ -59,8 +59,8 @@ public class BreakMorpheme extends Morpheme {
     }
 
     @Override
-    public void action(boolean replace) {
-      context.world().destroyBlock(pos, !replace);
+    public void destroy() {
+      context.world().destroyBlock(pos, false);
     }
   }
 }

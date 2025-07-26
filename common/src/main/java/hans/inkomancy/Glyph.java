@@ -11,11 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record Glyph(Morpheme morpheme, int width, int height, int center, int[] values) {
+public record Glyph(Morpheme morpheme, int width, int height, int center, Value[] values) {
+  public enum Value {
+    FALSE,
+    OPTIONAL,
+    TRUE
+  }
+
   public static final Glyph START = Glyph.create(SourceMorpheme.INSTANCE, 1, """
-      +++
-      _+_
-      _+_
+      ++_
+      +_+
       +++
       """);
 
@@ -177,16 +182,16 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
     for (var glyph : GLYPHS) {
       var width = glyph.width + 4;
       var height = glyph.height + 4;
-      var values = new int[width * height];
+      var values = new Value[width * height];
       for (var col = 0; col < width; col++) {
         for (var row = 0; row < height; row++) {
           var i = col + row * width;
           if (col == 0 || col == width - 1 || row == 0 || row == height - 1) {
-            values[i] = 1;
+            values[i] = Value.TRUE;
           } else if (col >= 2 && col <= width - 3 && row >= 2 && row <= height - 3) {
             values[i] = glyph.valueAt(row - 2, col - 2);
           } else {
-            values[i] = 0;
+            values[i] = Value.FALSE;
           }
         }
       }
@@ -208,7 +213,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
     }
   }
 
-  public int valueAt(int row, int col) {
+  public Value valueAt(int row, int col) {
     return values[col + row * width];
   }
 
@@ -220,7 +225,8 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
     var blocks = new ArrayList<BlockPos>();
     for (var col = 0; col < width; col++) {
       for (var row = 0; row < height; row++) {
-        if (valueAt(row, col) == 1) {
+        var value = valueAt(row, col);
+        if (value == Value.TRUE) {
           blocks.add(localToBlockPos(rootPos, transform, row, col));
         }
       }
@@ -232,11 +238,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
     for (var col = 0; col < width; col++) {
       for (var row = 0; row < height; row++) {
         var pos = localToBlockPos(rootPos, transform, row, col);
-        if (valueAt(row, col) == 2) {
+        var value = valueAt(row, col);
+        if (value == Value.OPTIONAL) {
           continue;
         }
 
-        if (block.canAttach(world.getBlockState(pos), transform) != (valueAt(row, col) == 1)) {
+        if (block.canAttach(world.getBlockState(pos), transform) != (value == Value.TRUE)) {
           return false;
         }
       }
@@ -249,31 +256,31 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
     var list = new ArrayList<Connector>();
 
     for (var col = center; col >= 0; col--) {
-      if (valueAt(0, col)  == 1) {
+      if (valueAt(0, col) == Value.TRUE) {
         list.add(new Connector(localToBlockPos(rootPos, transform, -1, col), transform.backwards()));
       }
     }
 
     for (var row = 0; row < height; row++) {
-      if (valueAt(row, 0) == 1) {
+      if (valueAt(row, 0) == Value.TRUE) {
         list.add(new Connector(localToBlockPos(rootPos, transform, row, -1), transform.left()));
       }
     }
 
     for (var col = 0; col < width; col++) {
-      if (valueAt(height - 1, col) == 1) {
+      if (valueAt(height - 1, col) == Value.TRUE) {
         list.add(new Connector(localToBlockPos(rootPos, transform, height, col), transform.forwards()));
       }
     }
 
     for (var row = height - 1; row >= 0; row--) {
-      if (valueAt(row, width - 1) == 1) {
+      if (valueAt(row, width - 1) == Value.TRUE) {
         list.add(new Connector(localToBlockPos(rootPos, transform, row, width), transform.right()));
       }
     }
 
     for (var col = width - 1; col > center; col--) {
-      if (valueAt(0, col) == 1) {
+      if (valueAt(0, col) == Value.TRUE) {
         list.add(new Connector(localToBlockPos(rootPos, transform, -1, col), transform.backwards()));
       }
     }
@@ -289,7 +296,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
   }
 
   public static Glyph create(Morpheme morpheme, int center, String s) {
-    var values = new ArrayList<Integer>();
+    var values = new ArrayList<Value>();
     var rows = s.split("\n");
     var height = 0;
     var length = 0;
@@ -302,12 +309,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, int[] 
       var chars = row.toCharArray();
       for (var i = chars.length - 1; i >= 0; i--) {
         length++;
-        values.addFirst(chars[i] == '_' ? 0 : chars[i] == '+' ? 1 : 2);
+        values.addFirst(chars[i] == '_' ? Value.FALSE : chars[i] == '+' ? Value.TRUE : Value.OPTIONAL);
       }
 
       height++;
     }
 
-    return new Glyph(morpheme, length / height, height, center, values.stream().mapToInt(x -> x).toArray());
+    return new Glyph(morpheme, length / height, height, center, values.toArray(Value[]::new));
   }
 }
