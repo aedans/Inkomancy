@@ -9,9 +9,8 @@ import hans.inkomancy.Ink;
 import hans.inkomancy.InkBlock;
 import hans.inkomancy.Inkomancy;
 import hans.inkomancy.Morpheme;
-import hans.inkomancy.inks.BlackInk;
-import hans.inkomancy.inks.RedInk;
-import hans.inkomancy.inks.VoidInk;
+import hans.inkomancy.inks.ArdentInk;
+import hans.inkomancy.inks.ConductiveInk;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -42,7 +41,7 @@ public class InkomancyModelGenerator extends FabricModelProvider {
   public static final Map<VariantProperties.Rotation, VariantProperties.Rotation> NEXT_ROTATION = Maps.newEnumMap(
       ImmutableMap.of(R0, R90, R90, R180, R180, R270, R270, R0));
 
-  public void generateInkBlockModel(BlockModelGenerators generator, String name) {
+  public void generateInkBlockModel(BlockModelGenerators generator, String name, String color) {
     for (VariantProperties.Rotation rotation : VariantProperties.Rotation.values()) {
       int rotationValue = rotation.ordinal() * 90;
 
@@ -50,8 +49,8 @@ public class InkomancyModelGenerator extends FabricModelProvider {
       root.addProperty("ambientocclusion", false);
 
       JsonObject textures = new JsonObject();
-      textures.addProperty("texture", Inkomancy.MOD_ID + ":block/" + name);
-      textures.addProperty("particle", Inkomancy.MOD_ID + ":block/" + name);
+      textures.addProperty("texture", Inkomancy.MOD_ID + ":block/" + color + "_" + name);
+      textures.addProperty("particle", Inkomancy.MOD_ID + ":block/" + color + "_" + name);
 
       JsonArray elements = getJsonElements(rotationValue);
 
@@ -59,7 +58,7 @@ public class InkomancyModelGenerator extends FabricModelProvider {
       root.add("elements", elements);
       root.addProperty("render_type", "minecraft:translucent");
 
-      var identifier = ResourceLocation.fromNamespaceAndPath(Inkomancy.MOD_ID, "block/" + name + "_" + rotationValue);
+      var identifier = ResourceLocation.fromNamespaceAndPath(Inkomancy.MOD_ID, "block/" + color + "_" + name + "_" + rotationValue);
       generator.modelOutput.accept(identifier, () -> root);
     }
   }
@@ -102,6 +101,7 @@ public class InkomancyModelGenerator extends FabricModelProvider {
 
   private void updateDirectionalSupplier(
       String model,
+      String color,
       VariantProperties.Rotation rotation,
       Map<String, Pair<Condition, List<Variant>>> variantMap,
       Predicate<Direction> predicate) {
@@ -136,7 +136,7 @@ public class InkomancyModelGenerator extends FabricModelProvider {
         y = R90;
       }
 
-      var identifier = ResourceLocation.fromNamespaceAndPath(Inkomancy.MOD_ID, "block/" + model + "_" + (rotation.ordinal() * 90));
+      var identifier = ResourceLocation.fromNamespaceAndPath(Inkomancy.MOD_ID, "block/" + color + "_" + model + "_" + (rotation.ordinal() * 90));
       var variants = variantMap.getOrDefault(whenString.toString(), new Pair<>(when, new ArrayList<>()));
       variants.getSecond().add(Variant.variant()
           .with(VariantProperties.MODEL, identifier)
@@ -149,12 +149,13 @@ public class InkomancyModelGenerator extends FabricModelProvider {
   private void updateAllDirectionalSupplier(
       MultiPartGenerator supplier,
       String model,
+      String color,
       BiPredicate<Direction, Direction> predicate) {
     var rotation = R0;
     var variantMap = new HashMap<String, Pair<Condition, List<Variant>>>();
 
     for (Direction direction : Direction.Plane.HORIZONTAL) {
-      updateDirectionalSupplier(model, rotation, variantMap, d -> predicate.test(direction, d));
+      updateDirectionalSupplier(model, color, rotation, variantMap, d -> predicate.test(direction, d));
       rotation = NEXT_ROTATION.get(rotation);
     }
 
@@ -163,38 +164,42 @@ public class InkomancyModelGenerator extends FabricModelProvider {
     }
   }
 
-  public void generateInkBlockStateModel(BlockModelGenerators generator, String name, Block block) {
+  public void generateInkBlockStateModel(BlockModelGenerators generator, String name, String color, Block block) {
     var s = MultiPartGenerator.multiPart(block);
 
-    updateAllDirectionalSupplier(s, name + "_dot", (d1, d2) -> false);
-    updateAllDirectionalSupplier(s, name + "_four", (d1, d2) -> true);
-    updateAllDirectionalSupplier(s, name + "_end", (d1, d2) -> d1 == d2);
-    updateAllDirectionalSupplier(s, name + "_straight", (d1, d2) -> d1 == d2 || d1 == d2.getOpposite());
-    updateAllDirectionalSupplier(s, name + "_corner", (d1, d2) -> d1 == d2 || d1.getClockWise() == d2);
-    updateAllDirectionalSupplier(s, name + "_three",
+    updateAllDirectionalSupplier(s, name + "_dot", color, (d1, d2) -> false);
+    updateAllDirectionalSupplier(s, name + "_four", color, (d1, d2) -> true);
+    updateAllDirectionalSupplier(s, name + "_end", color, (d1, d2) -> d1 == d2);
+    updateAllDirectionalSupplier(s, name + "_straight", color, (d1, d2) -> d1 == d2 || d1 == d2.getOpposite());
+    updateAllDirectionalSupplier(s, name + "_corner", color, (d1, d2) -> d1 == d2 || d1.getClockWise() == d2);
+    updateAllDirectionalSupplier(s, name + "_three", color,
         (d1, d2) -> d1 == d2 || d1 == d2.getOpposite() || d1.getClockWise() == d2);
 
     generator.blockStateOutput.accept(s);
 
-    generateInkBlockModel(generator, name + "_corner");
-    generateInkBlockModel(generator, name + "_dot");
-    generateInkBlockModel(generator, name + "_end");
-    generateInkBlockModel(generator, name + "_four");
-    generateInkBlockModel(generator, name + "_straight");
-    generateInkBlockModel(generator, name + "_three");
+    generateInkBlockModel(generator, name + "_corner", color);
+    generateInkBlockModel(generator, name + "_dot", color);
+    generateInkBlockModel(generator, name + "_end", color);
+    generateInkBlockModel(generator, name + "_four", color);
+    generateInkBlockModel(generator, name + "_straight", color);
+    generateInkBlockModel(generator, name + "_three", color);
   }
 
   @Override
   public void generateBlockStateModels(BlockModelGenerators generator) {
-    generateInkBlockStateModel(generator, "black_ink", BlackInk.INSTANCE.getBlock());
-    generateInkBlockStateModel(generator, "red_ink", RedInk.INSTANCE.getBlock());
-    generateInkBlockStateModel(generator, "void_ink", VoidInk.INSTANCE.getBlock());
+    for (var color : Inkomancy.COLORS) {
+      generateInkBlockStateModel(generator, "ardent_ink", color, ArdentInk.INSTANCE.getBlock(color));
+      generateInkBlockStateModel(generator, "conductive_ink", color, ConductiveInk.INSTANCE.getBlock(color));
+//      generateInkBlockStateModel(generator, "void_ink_", VoidInk.INSTANCE.getBlock());
+    }
   }
 
   @Override
   public void generateItemModels(ItemModelGenerators generator) {
     for (var ink : Ink.getInks()) {
-      generator.generateFlatItem(ink.getItem(), ModelTemplates.FLAT_ITEM);
+      for (var color : Inkomancy.COLORS) {
+        generator.generateFlatItem(ink.getItem(color), ModelTemplates.FLAT_ITEM);
+      }
     }
 
     for (var morpheme : Morpheme.getMorphemes()) {

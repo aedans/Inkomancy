@@ -1,7 +1,0 @@
-{
-  "type": "inkomancy:transmutation",
-  "ingredient": "minecraft:coal",
-  "result": {
-    "id": "inkomancy:black_ink"
-  }
-}

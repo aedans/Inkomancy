@@ -3,7 +3,7 @@ package hans.inkomancy;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
-import hans.inkomancy.inks.RedInk;
+import hans.inkomancy.inks.ConductiveInk;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -70,7 +70,7 @@ public class InkBlock extends DirectionalBlock {
     if (world instanceof ServerLevel server && (player == null || player instanceof ServerPlayer)) {
       var ink = Ink.getBy(Ink::getBlock, this);
       var transform = Transform2D.of(state.getValue(FACING));
-      var parser = new SpellParser(server, ink);
+      var parser = new SpellParser(server, this);
       var connected = parser.connectedBlocks(pos, transform);
 
       var start = parser.findStart(connected);
@@ -89,7 +89,7 @@ public class InkBlock extends DirectionalBlock {
       world.playSound(null, pos, ink.sound(), SoundSource.BLOCKS);
 
       for (var block : blocks) {
-        Ink.getBy(Ink::getBlock, InkBlock.this).handleBlock(server, block);
+        ink.handleBlock(server, block);
       }
     }
 
@@ -124,7 +124,7 @@ public class InkBlock extends DirectionalBlock {
       return;
     }
 
-    if (Ink.getBy(Ink::getBlock, this) == RedInk.INSTANCE && world.hasNeighborSignal(pos)) {
+    if (Ink.getBy(Ink::getBlock, this) == ConductiveInk.INSTANCE && world.hasNeighborSignal(pos)) {
       use(state, pos, world, null);
     }
 

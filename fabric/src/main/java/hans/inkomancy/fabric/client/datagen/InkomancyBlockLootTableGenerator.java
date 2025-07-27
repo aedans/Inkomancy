@@ -1,6 +1,7 @@
 package hans.inkomancy.fabric.client.datagen;
 
 import hans.inkomancy.Ink;
+import hans.inkomancy.Inkomancy;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.core.HolderLookup;
@@ -15,7 +16,9 @@ public class InkomancyBlockLootTableGenerator extends FabricBlockLootTableProvid
   @Override
   public void generate() {
     for (var ink : Ink.getInks()) {
-      add(ink.getBlock(), this.createSingleItemTable(ink.getItem()));
+      for (var color : Inkomancy.COLORS) {
+        add(ink.getBlock(color), this.createSingleItemTable(ink.getItem(color)));
+      }
     }
   }
 }

@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
@@ -14,19 +15,28 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
     super(dataOutput, "en_us", registryLookup);
   }
 
+  private String capitalizeWord(String s) {
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
+  }
+
+  private String capitalize(String s) {
+    return Arrays.stream(s.replace("_", " ").split(" ")).map(this::capitalizeWord).reduce("", (a, b) -> a + " " + b).trim();
+  }
+
   @Override
   public void generateTranslations(HolderLookup.Provider provider, TranslationBuilder translationBuilder) {
     translationBuilder.add("itemGroup.inkomancy.inkomancy_tab", "Inkomancy");
 
     for (var ink : Ink.getInks()) {
-      var name = ink.name.substring(0, 1).toUpperCase() + ink.name.substring(1);
-      translationBuilder.add(ink.getItem(), name + " Ink");
-      translationBuilder.add("tag.item.inkomancy." + ink.name + "_ink_tool_materials", name + " Ink Tool Materials");
+      for (var color : Inkomancy.COLORS) {
+        translationBuilder.add(ink.getItem(color), capitalize(color) + " " + capitalize(ink.name) + " Ink");
+      }
     }
 
+    translationBuilder.add("tag.item.inkomancy.ink_tool_materials", "Ink Tool Materials");
+
     for (var morpheme : Morpheme.getMorphemes()) {
-      var name = morpheme.name.substring(0, 1).toUpperCase() + morpheme.name.substring(1);
-      translationBuilder.add(morpheme.getItem(), name + " Morpheme");
+      translationBuilder.add(morpheme.getItem(), capitalize(morpheme.name) + " Morpheme");
     }
 
     translationBuilder.add(Inkomancy.INK_HELPER.get(), "Inky");

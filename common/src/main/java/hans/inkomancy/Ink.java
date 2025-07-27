@@ -1,55 +1,60 @@
 package hans.inkomancy;
 
 import dev.architectury.registry.registries.RegistrySupplier;
-import hans.inkomancy.inks.BlackInk;
-import hans.inkomancy.inks.RedInk;
+import hans.inkomancy.inks.ArdentInk;
+import hans.inkomancy.inks.ConductiveInk;
 import hans.inkomancy.inks.VoidInk;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.item.ToolMaterial;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public abstract class Ink {
   public final String name;
-  private RegistrySupplier<InkBlock> block;
-  private RegistrySupplier<InkItem> item;
+  public final Map<String, RegistrySupplier<InkBlock>> block = new HashMap<>();
+  public final Map<String, RegistrySupplier<InkItem>> item = new HashMap<>();
 
   public Ink(String name) {
     this.name = name;
   }
 
   public void register() {
-    this.block = Inkomancy.registerInkBlock(this);
-    this.item = Inkomancy.registerInkItem(this);
+    for (var color : Inkomancy.COLORS) {
+      this.block.put(color, Inkomancy.registerInkBlock(this, color));
+      this.item.put(color, Inkomancy.registerInkItem(this, color));
+    }
   }
 
   public static Ink[] getInks() {
     return new Ink[]{
-        BlackInk.INSTANCE,
-        RedInk.INSTANCE,
+        ArdentInk.INSTANCE,
+        ConductiveInk.INSTANCE,
         VoidInk.INSTANCE
     };
   }
 
-  public static <T> Ink getBy(Function<Ink, T> f, T t) {
+  public static <T> Ink getBy(BiFunction<Ink, String, T> f, T t) {
     for (var ink : getInks()) {
-      if (f.apply(ink) == t) {
-        return ink;
+      for (var color : Inkomancy.COLORS) {
+        if (f.apply(ink, color) == t) {
+          return ink;
+        }
       }
     }
 
     throw new Error("No ink for " + t);
   }
 
-  public InkBlock getBlock() {
-    return block.get();
+  public InkBlock getBlock(String color) {
+    return block.get(color).get();
   }
 
-  public InkItem getItem() {
-    return item.get();
+  public InkItem getItem(String color) {
+    return item.get(color).get();
   }
 
   public abstract SoundEvent sound();
@@ -61,6 +66,4 @@ public abstract class Ink {
   public abstract void handleBlock(ServerLevel world, BlockPos pos);
 
   public abstract String lore();
-
-  public abstract ToolMaterial material();
 }

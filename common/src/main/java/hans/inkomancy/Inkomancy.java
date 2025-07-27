@@ -6,8 +6,8 @@ import dev.architectury.event.events.common.LootEvent;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.registry.registries.RegistrySupplier;
-import hans.inkomancy.inks.BlackInk;
-import hans.inkomancy.inks.RedInk;
+import hans.inkomancy.inks.ArdentInk;
+import hans.inkomancy.inks.ConductiveInk;
 import hans.inkomancy.morphemes.*;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -40,6 +40,7 @@ import java.util.function.Supplier;
 
 public final class Inkomancy {
   public static final String MOD_ID = "inkomancy";
+  public static final List<String> COLORS = List.of("white", "light_gray", "gray", "black", "brown", "red", "orange", "yellow", "lime", "green", "cyan", "light_blue", "blue", "purple", "magenta", "pink");
 
   public static final Supplier<RegistrarManager> MANAGER = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
   public static final Registrar<Item> ITEMS = MANAGER.get().get(Registries.ITEM);
@@ -63,8 +64,8 @@ public final class Inkomancy {
     return ITEMS.register(rl, () -> item.apply(key));
   }
 
-  public static RegistrySupplier<InkBlock> registerInkBlock(Ink ink) {
-    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink");
+  public static RegistrySupplier<InkBlock> registerInkBlock(Ink ink, String color) {
+    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, color + "_" + ink.name + "_ink");
     var key = ResourceKey.create(Registries.BLOCK, rl);
     var sound = new SoundType(1, 1,
         SoundEvents.INK_SAC_USE, SoundEvents.EMPTY, SoundEvents.INK_SAC_USE, SoundEvents.EMPTY, SoundEvents.EMPTY);
@@ -77,10 +78,10 @@ public final class Inkomancy {
             .sound(sound)));
   }
 
-  public static RegistrySupplier<InkItem> registerInkItem(Ink ink) {
-    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, ink.name + "_ink");
+  public static RegistrySupplier<InkItem> registerInkItem(Ink ink, String color) {
+    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, color + "_" + ink.name + "_ink");
     var key = ResourceKey.create(Registries.ITEM, rl);
-    return ITEMS.register(rl, () -> new InkItem(ink.getBlock(), itemSettings(key)));
+    return ITEMS.register(rl, () -> new InkItem(ink.getBlock(color), itemSettings(key)));
   }
 
   public static RegistrySupplier<MorphemeItem> registerMorphemeItem(Morpheme morpheme) {
@@ -102,12 +103,12 @@ public final class Inkomancy {
     );
   }
 
-  public static final RegistrySupplier<Item> SPELL_SCRIBE = registerItem("spell_scribe", key -> new SpellScribeItem(itemSettings(key), BlackInk.INSTANCE));
-  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
-  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
-  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
-  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
-  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem(itemSettings(key), RedInk.INSTANCE));
+  public static final RegistrySupplier<Item> SPELL_SCRIBE = registerItem("spell_scribe", key -> new SpellScribeItem(itemSettings(key), ArdentInk.INSTANCE));
+  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
+  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
+  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
+  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
+  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
 
   public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new InkHelperItem(itemSettings(key)));
   public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
@@ -127,7 +128,9 @@ public final class Inkomancy {
   public static List<Item> items() {
     var items = new ArrayList<Item>();
     for (var ink : Ink.getInks()) {
-      items.add(ink.getItem());
+      for (var color : Inkomancy.COLORS) {
+        items.add(ink.getItem(color));
+      }
     }
 
     items.add(SPELL_SCRIBE.get());

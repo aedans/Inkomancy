@@ -5,13 +5,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ToolMaterial;
 
 import java.util.Set;
 
 public class VoidInk extends Ink {
   public static final VoidInk INSTANCE = new VoidInk();
-  public static final ToolMaterial MATERIAL = ToolMaterial.NETHERITE;
 
   private VoidInk() {
     super("void");
@@ -40,10 +38,5 @@ public class VoidInk extends Ink {
   @Override
   public String lore() {
     return "...";
-  }
-
-  @Override
-  public ToolMaterial material() {
-    return MATERIAL;
   }
 }
