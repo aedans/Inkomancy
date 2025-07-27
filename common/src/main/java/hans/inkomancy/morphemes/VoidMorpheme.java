@@ -25,8 +25,12 @@ public class VoidMorpheme extends Morpheme {
     var items = new Args(spell, context).get(Type.ITEMS, m -> m::interpretAsItems)
         .stream().flatMap(List::stream).toList();
     for (var item : items) {
-      server.inkomancy$getVoidContainer().addItem(item.get());
-      item.destroy();
+      var leftover = server.inkomancy$getVoidContainer().addItem(item.get());
+      if (leftover.isEmpty()) {
+        item.destroy();
+      } else if (leftover.getCount() != item.get().getCount()) {
+        item.set(leftover);
+      }
     }
   }
 }
