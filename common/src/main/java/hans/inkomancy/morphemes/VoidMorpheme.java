@@ -39,7 +39,7 @@ public class VoidMorpheme extends Morpheme {
 
   public List<String> getColors(Spell spell, SpellContext context) {
     var list = new ArrayList<String>();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 1; i < 4; i++) {
       if (context.world().getBlockState(context.getPosition(spell, i)).getBlock() instanceof InkBlock block) {
         list.add(Ink.colorOf(block));
       } else {
