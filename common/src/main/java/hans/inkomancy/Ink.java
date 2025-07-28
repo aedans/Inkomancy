@@ -49,6 +49,18 @@ public abstract class Ink {
     return null;
   }
 
+  public static String colorOf(InkItem item) {
+    for (var ink : getInks()) {
+      for (var color : Inkomancy.COLORS) {
+        if (ink.items.get(color).get().equals(item)) {
+          return color;
+        }
+      }
+    }
+
+    return null;
+  }
+
   public static <T> Ink getBy(BiFunction<Ink, String, T> f, T t) {
     for (var ink : getInks()) {
       for (var color : Inkomancy.COLORS) {

@@ -16,7 +16,7 @@ public class ToolMorpheme extends Morpheme {
   public static final ToolMorpheme INSTANCE = new ToolMorpheme();
 
   private ToolMorpheme() {
-    super("tool", Set.of(Type.ITEMS, Type.ACTION));
+    super("tool", Set.of(Type.ITEMS));
   }
 
   @Override

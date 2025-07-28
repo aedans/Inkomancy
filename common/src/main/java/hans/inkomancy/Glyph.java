@@ -63,6 +63,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           ++_+
           _+++
           """),
+      Glyph.create(VoidMorpheme.INSTANCE, 1, """
+          +_+
+          +_+
+          +_+
+          +++
+          """),
       Glyph.create(GrowMorpheme.INSTANCE, 1, """
           _++
           ++_
@@ -125,11 +131,6 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           """),
       Glyph.create(HoleMorpheme.INSTANCE, 1, """
           +++
-          +_+
-          +++
-          """),
-      Glyph.create(VoidMorpheme.INSTANCE, 1, """
-          +_+
           +_+
           +++
           """),

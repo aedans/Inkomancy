@@ -49,21 +49,4 @@ public class HoleMorpheme extends Morpheme {
     var position = context.getPosition(spell, 1);
     return AABB.encapsulatingFullBlocks(position.offset(-1, -1, -1), position.offset(1, 1, 1));
   }
-
-  private record ItemStackEntityDelegate(SpellContext context, ItemEntity entity) implements Delegate<ItemStack> {
-    public ItemStack get() {
-      return entity.getItem();
-    }
-
-    public void set(ItemStack modified) {
-      entity.setItem(modified.copy());
-      EffectUtils.magicEffect(context.world(), entity.position());
-    }
-
-    @Override
-    public void destroy() {
-      entity.kill(context.world());
-      EffectUtils.magicEffect(context.world(), entity.position());
-    }
-  }
 }

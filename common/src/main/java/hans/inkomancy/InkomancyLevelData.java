@@ -1,5 +1,7 @@
 package hans.inkomancy;
 
+import java.util.List;
+
 public interface InkomancyLevelData {
-  VoidContainer inkomancy$getVoidContainer();
+  VoidContainer inkomancy$getVoidContainer(List<String> colors);
 }

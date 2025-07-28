@@ -8,13 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class Morpheme {
@@ -130,6 +128,40 @@ public abstract class Morpheme {
   public record Position(Vec3 absolute, BlockPos blockPos) {
     public Position(BlockPos pos) {
       this(pos.getCenter(), pos);
+    }
+  }
+
+  public record ItemStackEntityDelegate(SpellContext context, ItemEntity entity) implements Delegate<ItemStack> {
+    public ItemStack get() {
+      return entity.getItem();
+    }
+
+    public void set(ItemStack modified) {
+      entity.setItem(modified.copy());
+      EffectUtils.magicEffect(context.world(), entity.position());
+    }
+
+    @Override
+    public void destroy() {
+      entity.kill(context.world());
+      EffectUtils.magicEffect(context.world(), entity.position());
+    }
+  }
+
+  public record BlockItemDelegate(SpellContext context, ItemStack item, BlockPos pos) implements Delegate<ItemStack> {
+    @Override
+    public ItemStack get() {
+      return item;
+    }
+
+    @Override
+    public void set(ItemStack modified) {
+
+    }
+
+    @Override
+    public void destroy() {
+      context.world().destroyBlock(pos, false);
     }
   }
 }
