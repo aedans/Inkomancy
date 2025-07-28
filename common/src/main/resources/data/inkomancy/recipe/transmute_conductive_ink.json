@@ -1,7 +1,0 @@
-{
-  "type": "inkomancy:transmutation",
-  "ingredient": "minecraft:redstone",
-  "result": {
-    "id": "inkomancy:conductive_ink"
-  }
-}

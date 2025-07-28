@@ -11,5 +11,6 @@ public class InkomancyDataGenerator implements DataGeneratorEntrypoint {
     pack.addProvider(InkomancyEnglishLanguageGenerator::new);
     pack.addProvider(InkomancyModelGenerator::new);
     pack.addProvider(InkomancyTagGenerator::new);
+    pack.addProvider(InkomancyRecipeGenerator::new);
   }
 }
