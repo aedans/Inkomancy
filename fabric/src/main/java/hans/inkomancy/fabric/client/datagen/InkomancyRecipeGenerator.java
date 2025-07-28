@@ -42,7 +42,7 @@ public class InkomancyRecipeGenerator extends FabricRecipeProvider {
   }
 
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "InkomancyRecipeGenerator";
   }
 }
