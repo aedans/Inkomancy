@@ -69,6 +69,7 @@ public class InkBlock extends DirectionalBlock {
   public InteractionResult use(BlockState state, BlockPos pos, Level world, @Nullable Player player) {
     if (world instanceof ServerLevel server && (player == null || player instanceof ServerPlayer)) {
       var ink = Ink.getBy(Ink::getBlock, this);
+      var color = Ink.colorOf(this);
       var transform = Transform2D.of(state.getValue(FACING));
       var parser = new SpellParser(server, this);
       var connected = parser.connectedBlocks(pos, transform);
@@ -89,7 +90,7 @@ public class InkBlock extends DirectionalBlock {
       world.playSound(null, pos, ink.sound(), SoundSource.BLOCKS);
 
       for (var block : blocks) {
-        ink.handleBlock(server, block);
+        ink.handleBlock(server, block, color);
       }
     }
 

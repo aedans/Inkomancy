@@ -37,7 +37,7 @@ public class ArdentInk extends Ink {
   }
 
   @Override
-  public void handleBlock(ServerLevel world, BlockPos pos) {
+  public void handleBlock(ServerLevel world, BlockPos pos, String color) {
     world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     EffectUtils.smokeEffect(world, pos);
   }

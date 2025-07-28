@@ -35,8 +35,8 @@ public class ConductiveInk extends Ink {
   }
 
   @Override
-  public void handleBlock(ServerLevel world, BlockPos pos) {
-    EffectUtils.redstoneEffect(world, pos);
+  public void handleBlock(ServerLevel world, BlockPos pos, String color) {
+    EffectUtils.dustEffect(world, pos, color);
   }
 
   @Override

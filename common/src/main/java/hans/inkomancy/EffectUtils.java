@@ -39,9 +39,9 @@ public class EffectUtils {
     world.sendParticles(ParticleTypes.SMOKE, p.x(), p.y(), p.z(), 5, .25, .25, .25, 0);
   }
 
-  public static void redstoneEffect(ServerLevel world, BlockPos pos) {
+  public static void dustEffect(ServerLevel world, BlockPos pos, String color) {
     var p = pos.getCenter();
-    world.sendParticles(DustParticleOptions.REDSTONE, p.x(), p.y(), p.z(), 3, .25, .25, .25, 0);
+    world.sendParticles(new DustParticleOptions(Inkomancy.HEXES.get(Inkomancy.COLORS.indexOf(color)), 1.0F), p.x(), p.y(), p.z(), 3, .25, .25, .25, 0);
   }
 
   public static void transmuteEffect(ServerLevel world, BlockPos pos) {
