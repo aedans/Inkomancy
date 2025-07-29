@@ -213,6 +213,8 @@ public class InkomancyModelGenerator extends FabricModelProvider {
     generator.generateFlatItem(Inkomancy.RED_QUILL.get(), ModelTemplates.FLAT_ITEM);
     generator.generateFlatItem(Inkomancy.INK_WAND.get(), ModelTemplates.FLAT_ITEM);
     generator.generateFlatItem(Inkomancy.FLOWER_WAND.get(), ModelTemplates.FLAT_ITEM);
+    generator.generateFlatItem(Inkomancy.MAGMA_PICKAXE.get(), ModelTemplates.FLAT_ITEM);
+    generator.generateFlatItem(Inkomancy.VOID_SHOVEL.get(), ModelTemplates.FLAT_ITEM);
 
     generator.generateFlatItem(Inkomancy.INK_BALL.get(), ModelTemplates.FLAT_ITEM);
   }

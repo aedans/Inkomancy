@@ -16,10 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -34,10 +31,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -109,11 +103,13 @@ public final class Inkomancy {
   }
 
   public static final RegistrySupplier<Item> SPELL_SCRIBE = registerItem("spell_scribe", key -> new SpellScribeItem(itemSettings(key), ArdentInk.INSTANCE));
-  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem(itemSettings(key)));
-  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem(itemSettings(key)));
-  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem(itemSettings(key)));
-  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem(itemSettings(key)));
-  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem(itemSettings(key)));
+  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem.Instance(itemSettings(key)));
+  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem.Instance(itemSettings(key)));
+  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem.Instance(itemSettings(key)));
+  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem.Instance(itemSettings(key)));
+  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem.Instance(itemSettings(key)));
+  public static final RegistrySupplier<Item> MAGMA_PICKAXE = registerItem("magma_pickaxe", key -> new MagicItem.PickaxeInstance(ToolMaterial.IRON, 1.0F, -2.8F, itemSettings(key)));
+  public static final RegistrySupplier<Item> VOID_SHOVEL = registerItem("void_shovel", key -> new MagicItem.ShovelInstance(ToolMaterial.IRON, 1.5F, -3.0F, itemSettings(key)));
 
   public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new InkHelperItem(itemSettings(key)));
   public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
@@ -131,13 +127,15 @@ public final class Inkomancy {
   public static final ResourceKey<CreativeModeTab> INKOMANCY_TAB_RK = ResourceKey.create(Registries.CREATIVE_MODE_TAB, INKOMANCY_TAB_RL);
 
   public static Map<Item, Spell> magicItems() {
-    var map = new HashMap<Item, Spell>();
+    var map = new LinkedHashMap<Item, Spell>();
 
     map.put(MIRROR.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE, new Spell(SelfMorpheme.INSTANCE))));
     map.put(RED_QUILL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
     map.put(BLUE_QUILL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
     map.put(INK_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE)));
     map.put(FLOWER_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
+    map.put(MAGMA_PICKAXE.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
+    map.put(VOID_SHOVEL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(MatchMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
 
     return map;
   }
