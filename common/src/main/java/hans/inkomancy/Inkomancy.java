@@ -18,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -30,11 +31,13 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -43,7 +46,7 @@ public final class Inkomancy {
   public static final List<String> COLORS = List.of("white", "light_gray", "gray", "black", "brown", "red", "orange", "yellow", "lime", "green", "cyan", "light_blue", "blue", "purple", "magenta", "pink");
   public static final List<Item> DYES = List.of(Items.WHITE_DYE, Items.LIGHT_GRAY_DYE, Items.GRAY_DYE, Items.BLACK_DYE, Items.BROWN_DYE, Items.RED_DYE, Items.ORANGE_DYE, Items.YELLOW_DYE, Items.LIME_DYE, Items.GREEN_DYE, Items.CYAN_DYE, Items.LIGHT_BLUE_DYE, Items.BLUE_DYE, Items.PURPLE_DYE, Items.MAGENTA_DYE, Items.PINK_DYE);
   public static final List<Integer> HEXES = List.of(0xF9FFFE, 0x9D9D97, 0x474F52, 0x1D1D21, 0x835432, 0xB02E26, 0xF9801D, 0xFED83D, 0x80C71F, 0x5E7C16, 0x169C9C, 0x3AB3DA, 0x3C44AA, 0x8932B8, 0xC74EBD, 0xF38BAA);
-  
+
   public static final Supplier<RegistrarManager> MANAGER = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
   public static final Registrar<Item> ITEMS = MANAGER.get().get(Registries.ITEM);
   public static final Registrar<Block> BLOCKS = MANAGER.get().get(Registries.BLOCK);
@@ -127,26 +130,38 @@ public final class Inkomancy {
   public static final ResourceLocation INKOMANCY_TAB_RL = ResourceLocation.fromNamespaceAndPath(MOD_ID, "inkomancy");
   public static final ResourceKey<CreativeModeTab> INKOMANCY_TAB_RK = ResourceKey.create(Registries.CREATIVE_MODE_TAB, INKOMANCY_TAB_RL);
 
-  public static List<Item> items() {
-    var items = new ArrayList<Item>();
+  public static Map<Item, Spell> magicItems() {
+    var map = new HashMap<Item, Spell>();
+
+    map.put(MIRROR.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE, new Spell(SelfMorpheme.INSTANCE))));
+    map.put(RED_QUILL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
+    map.put(BLUE_QUILL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
+    map.put(INK_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE)));
+    map.put(FLOWER_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
+
+    return map;
+  }
+
+  public static List<ItemStack> items() {
+    var items = new ArrayList<ItemStack>();
     for (var ink : Ink.getInks()) {
       for (var color : Inkomancy.COLORS) {
-        items.add(ink.getItem(color));
+        items.add(ink.getItem(color).getDefaultInstance());
       }
     }
 
-    items.add(SPELL_SCRIBE.get());
-    items.add(MIRROR.get());
-    items.add(BLUE_QUILL.get());
-    items.add(RED_QUILL.get());
-    items.add(INK_WAND.get());
-    items.add(FLOWER_WAND.get());
+    for (var item : magicItems().entrySet()) {
+      ItemStack stack = item.getKey().getDefaultInstance();
+      stack.set(SPELL_COMPONENT_TYPE.get(), item.getValue());
+      items.add(stack);
+    }
 
-    items.add(INK_HELPER.get());
-    items.add(INK_BALL.get());
+    items.add(SPELL_SCRIBE.get().getDefaultInstance());
+    items.add(INK_HELPER.get().getDefaultInstance());
+    items.add(INK_BALL.get().getDefaultInstance());
 
     for (var morpheme : Morpheme.getMorphemes()) {
-      items.add(morpheme.getItem());
+      items.add(morpheme.getItem().getDefaultInstance());
     }
 
     return items;
@@ -186,21 +201,14 @@ public final class Inkomancy {
 
     LootEvent.MODIFY_LOOT_TABLE.register((ResourceKey<LootTable> key, LootEvent.LootTableModificationContext ctx, boolean b) -> {
       if (tables.containsKey(key)) {
-        var spellScribe = LootItem.lootTableItem(SPELL_SCRIBE.get()).setWeight(2);
+        ArrayList<LootPoolSingletonContainer.Builder<?>> items = new ArrayList<>();
 
-        var mirrorSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE, new Spell(SelfMorpheme.INSTANCE)));
-        var mirror = LootItem.lootTableItem(MIRROR.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), mirrorSpell));
+        items.add(LootItem.lootTableItem(SPELL_SCRIBE.get()).setWeight(2));
 
-        var quillSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)));
-        var redQuill = LootItem.lootTableItem(RED_QUILL.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), quillSpell));
+        for (var entry : magicItems().entrySet()) {
+          items.add(LootItem.lootTableItem(entry.getKey()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), entry.getValue())));
+        }
 
-        var inkWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE));
-        var inkWand = LootItem.lootTableItem(INK_WAND.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), inkWandSpell));
-
-        var flowerWandSpell = new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)));
-        var flowerWand = LootItem.lootTableItem(FLOWER_WAND.get()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), flowerWandSpell));
-
-        var items = List.of(spellScribe, mirror, redQuill, inkWand, flowerWand);
         var poolBuilder = LootPool.lootPool().add(EmptyLootItem.emptyItem().setWeight((items.size() + 1) * (tables.get(key) - 1)));
 
         for (var item : items) {
