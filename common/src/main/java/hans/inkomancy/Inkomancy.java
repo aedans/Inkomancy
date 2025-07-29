@@ -7,7 +7,6 @@ import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 import hans.inkomancy.inks.ArdentInk;
-import hans.inkomancy.inks.ConductiveInk;
 import hans.inkomancy.morphemes.*;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -107,11 +106,11 @@ public final class Inkomancy {
   }
 
   public static final RegistrySupplier<Item> SPELL_SCRIBE = registerItem("spell_scribe", key -> new SpellScribeItem(itemSettings(key), ArdentInk.INSTANCE));
-  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
-  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
-  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
-  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
-  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem(itemSettings(key), ConductiveInk.INSTANCE));
+  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem(itemSettings(key)));
+  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem(itemSettings(key)));
+  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem(itemSettings(key)));
+  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem(itemSettings(key)));
+  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem(itemSettings(key)));
 
   public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new InkHelperItem(itemSettings(key)));
   public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
