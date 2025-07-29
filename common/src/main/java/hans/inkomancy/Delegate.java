@@ -40,7 +40,7 @@ public interface Delegate<T> {
 
     @Override
     public void destroy() {
-
+      set(null);
     }
 
     @Override

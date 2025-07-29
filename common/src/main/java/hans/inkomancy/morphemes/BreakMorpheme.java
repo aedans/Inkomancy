@@ -1,6 +1,7 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -23,7 +24,7 @@ public class BreakMorpheme extends Morpheme {
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
     for (var delegate : interpretBreak(spell, context)) {
-      context.world().destroyBlock(delegate.pos(), true);
+      context.world().destroyBlock(delegate.pos, true);
     }
   }
 
@@ -44,5 +45,33 @@ public class BreakMorpheme extends Morpheme {
       }
     }
     return drops;
+  }
+
+  public static final class BlockItemDelegate implements Delegate<ItemStack> {
+    private ItemStack item;
+    private final SpellContext context;
+    private final BlockPos pos;
+
+    public BlockItemDelegate(SpellContext context, ItemStack item, BlockPos pos) {
+      this.context = context;
+      this.item = item;
+      this.pos = pos;
+    }
+
+    @Override
+    public ItemStack get() {
+      return item;
+    }
+
+    @Override
+    public void set(ItemStack modified) {
+      context.world().destroyBlock(pos, false);
+      item = modified;
+    }
+
+    @Override
+    public void destroy() {
+      set(null);
+    }
   }
 }

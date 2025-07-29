@@ -11,11 +11,11 @@ public class TransmuteMorpheme extends Morpheme {
   public static final TransmuteMorpheme INSTANCE = new TransmuteMorpheme();
 
   private TransmuteMorpheme() {
-    super("transmute", Set.of(Type.ACTION));
+    super("transmute", Set.of(Type.ACTION, Type.ITEMS));
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
     var inputs = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
         .stream().flatMap(List::stream).toList();
 
@@ -27,6 +27,13 @@ public class TransmuteMorpheme extends Morpheme {
 
       doTransmuteSingle(item, inventory, spell, context, RecipeType.SMELTING, 2);
     }
+
+    return inputs;
+  }
+
+  @Override
+  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+    interpretAsItems(spell, context);
   }
 
   public <T extends RecipeInput> boolean doTransmuteSingle(

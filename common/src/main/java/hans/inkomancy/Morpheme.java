@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -43,6 +42,7 @@ public abstract class Morpheme {
         ForeverMorpheme.INSTANCE,
         GrowMorpheme.INSTANCE,
         HoleMorpheme.INSTANCE,
+        MatchMorpheme.INSTANCE,
         ReadMorpheme.INSTANCE,
         RepairMorpheme.INSTANCE,
         SelfMorpheme.INSTANCE,
@@ -131,40 +131,6 @@ public abstract class Morpheme {
 
     public Position(Vec3 absolute) {
       this(absolute, new BlockPos((int) absolute.x, (int) absolute.y, (int) absolute.z));
-    }
-  }
-
-  public record ItemStackEntityDelegate(SpellContext context, ItemEntity entity) implements Delegate<ItemStack> {
-    public ItemStack get() {
-      return entity.getItem();
-    }
-
-    public void set(ItemStack modified) {
-      entity.setItem(modified.copy());
-      EffectUtils.magicEffect(context.world(), entity.position());
-    }
-
-    @Override
-    public void destroy() {
-      entity.kill(context.world());
-      EffectUtils.magicEffect(context.world(), entity.position());
-    }
-  }
-
-  public record BlockItemDelegate(SpellContext context, ItemStack item, BlockPos pos) implements Delegate<ItemStack> {
-    @Override
-    public ItemStack get() {
-      return item;
-    }
-
-    @Override
-    public void set(ItemStack modified) {
-
-    }
-
-    @Override
-    public void destroy() {
-      context.world().destroyBlock(pos, false);
     }
   }
 }

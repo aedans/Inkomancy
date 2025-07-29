@@ -31,6 +31,10 @@ public class HoleMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) {
+    if (context.itemsInput() != null) {
+      return context.itemsInput();
+    }
+
     var box = getBox(spell, context);
     var entities = context.world().getEntities(EntityTypeTest.forClass(ItemEntity.class), box, x -> true);
     return entities.stream().map(entity -> new ItemStackEntityDelegate(context, entity)).toList();
@@ -53,5 +57,22 @@ public class HoleMorpheme extends Morpheme {
   public AABB getBox(Spell spell, SpellContext context) {
     var position = context.getPosition(spell, 1);
     return AABB.encapsulatingFullBlocks(position.offset(-1, -1, -1), position.offset(1, 1, 1));
+  }
+
+  public record ItemStackEntityDelegate(SpellContext context, ItemEntity entity) implements Delegate<ItemStack> {
+    public ItemStack get() {
+      return entity.getItem();
+    }
+
+    public void set(ItemStack modified) {
+      entity.setItem(modified.copy());
+      EffectUtils.magicEffect(context.world(), entity.position());
+    }
+
+    @Override
+    public void destroy() {
+      entity.kill(context.world());
+      EffectUtils.magicEffect(context.world(), entity.position());
+    }
   }
 }

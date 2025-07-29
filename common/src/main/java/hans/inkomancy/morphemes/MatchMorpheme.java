@@ -3,10 +3,8 @@ package hans.inkomancy.morphemes;
 import hans.inkomancy.*;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MatchMorpheme extends Morpheme {
   public static final MatchMorpheme INSTANCE = new MatchMorpheme();
@@ -17,12 +15,17 @@ public class MatchMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    var inputs = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems);
-    var items = inputs.getFirst().stream().map(d -> d.get().getItem()).collect(Collectors.toSet());
-    for (var input : inputs.subList(1, inputs.size())) {
-      items.retainAll(input.stream().map(d -> d.get().getItem()).toList());
+    if (spell.connected().isEmpty()) {
+      return List.of();
     }
 
-    return inputs.stream().flatMap(Collection::stream).filter(d -> items.contains(d.get().getItem())).toList();
+    var s = spell.connected().getFirst();
+    var items = s.morpheme().interpretAsItems(s, context);
+
+    if (spell.connected().size() == 1) {
+      return List.of();
+    }
+
+    return items;
   }
 }

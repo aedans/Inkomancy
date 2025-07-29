@@ -18,15 +18,23 @@ public class VoidMorpheme extends Morpheme {
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
     var colors = getColors(spell, context);
     var server = (InkomancyLevelData) context.world().getServer().getWorldData();
-    return server.inkomancy$getVoidContainer(colors).removeAllItems().stream().map(Delegate.Instance::new).toList();
+    store(spell, context, colors, server);
+    return server.inkomancy$getVoidContainer(colors).getItems().stream()
+        .filter(x -> !x.equals(ItemStack.EMPTY))
+        .map(x -> new VoidItemDelegate(x, server.inkomancy$getVoidContainer(colors)))
+        .toList();
   }
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
     var colors = getColors(spell, context);
+    var server = (InkomancyLevelData) context.world().getServer().getWorldData();
+    store(spell, context, colors, server);
+  }
+
+  public void store(Spell spell, SpellContext context, List<String> colors, InkomancyLevelData server) throws InterpretError {
     var items = new Args(spell, context).get(Type.ITEMS, m -> m::interpretAsItems)
         .stream().flatMap(List::stream).toList();
-    var server = (InkomancyLevelData) context.world().getServer().getWorldData();
     for (var item : items) {
       var leftover = server.inkomancy$getVoidContainer(colors).addItem(item.get());
       if (leftover.isEmpty()) {
@@ -47,5 +55,43 @@ public class VoidMorpheme extends Morpheme {
       }
     }
     return list;
+  }
+
+  public static final class VoidItemDelegate implements Delegate<ItemStack> {
+    public ItemStack itemStack;
+    private final VoidContainer container;
+
+    public VoidItemDelegate(ItemStack itemStack, VoidContainer container) {
+      this.itemStack = itemStack;
+      this.container = container;
+    }
+
+    @Override
+    public ItemStack get() {
+      var index = container.getItems().indexOf(itemStack);
+      if (index >= 0) {
+        return itemStack;
+      } else {
+        return null;
+      }
+    }
+
+    @Override
+    public void set(ItemStack modified) {
+      var index = container.getItems().indexOf(itemStack);
+      if (index >= 0) {
+        container.setItem(index, modified);
+        itemStack = modified;
+      }
+    }
+
+    @Override
+    public void destroy() {
+      var index = container.getItems().indexOf(itemStack);
+      if (index >= 0) {
+        container.setItem(index, ItemStack.EMPTY);
+        set(null);
+      }
+    }
   }
 }

@@ -84,7 +84,7 @@ public class InkBlock extends DirectionalBlock {
       var spell = parser.parseSpell(start.getFirst(), Transform2D.of(facing, start.getSecond()), Glyph.START, blocks, 0);
 
       var mana = new ManaProvider(ink, ink.getMana(blocks));
-      var context = new SpellContext(server, (ServerPlayer) player, null, ink, mana);
+      var context = new SpellContext(server, (ServerPlayer) player, ink, mana, null, null);
       spell.morpheme().interpret(spell, context);
 
       world.playSound(null, pos, ink.sound(), SoundSource.BLOCKS, 0.25F, 1.0F);
