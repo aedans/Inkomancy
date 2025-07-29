@@ -14,7 +14,12 @@ public class HoleMorpheme extends Morpheme {
   public static final HoleMorpheme INSTANCE = new HoleMorpheme();
 
   private HoleMorpheme() {
-    super("hole", Set.of(Type.ENTITIES, Type.ITEMS, Type.ACTION));
+    super("hole", Set.of(Type.ENTITIES, Type.ITEMS, Type.ACTION, Type.POSITION));
+  }
+
+  @Override
+  public List<Position> interpretAsPositions(Spell spell, SpellContext context) {
+    return List.of(new Position(context.getPosition(spell, 1)));
   }
 
   @Override

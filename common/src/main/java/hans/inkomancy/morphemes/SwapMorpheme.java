@@ -4,10 +4,12 @@ import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.portal.TeleportTransition;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SwapMorpheme extends Morpheme {
   public static final SwapMorpheme INSTANCE = new SwapMorpheme();
@@ -18,17 +20,22 @@ public class SwapMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var args = new Args(spell, context);
-    List<List<? extends Delegate<? extends Entity>>> sourcesArgs = args.get(Type.ENTITIES, m -> m::interpretAsEntities);
-    List<Delegate<? extends Entity>> sources = sourcesArgs.stream().flatMap(List::stream).collect(Collectors.toList());
-    var targets = args.get(Type.POSITION, m -> m::interpretAsPositions)
-        .stream().flatMap(List::stream).collect(Collectors.toList());
-
-    if (sourcesArgs.isEmpty() && context.caster() != null) {
-      sources.add(new Delegate.Instance<>(context.caster()));
+    var args = new ArrayList<SwapArg>();
+    for (var arg : spell.connected()) {
+      args.addAll(interpretSwapArg(arg, context));
     }
 
-    if (targets.isEmpty()) {
+    var sources = new ArrayList<SwapArg>();
+    var destinations = new ArrayList<SwapArg>();
+    for (var arg : args) {
+      if (arg.entity() != null) {
+        sources.add(arg);
+      } else {
+        destinations.add(arg);
+      }
+    }
+
+    if (destinations.isEmpty() && sources.size() <= 1) {
       BlockPos spawn = null;
       if (context.caster() != null) {
         spawn = context.caster().getRespawnPosition();
@@ -38,16 +45,91 @@ public class SwapMorpheme extends Morpheme {
         spawn = context.world().getSharedSpawnPos();
       }
 
-      targets.add(new Position(spawn));
+      var center = spawn.getBottomCenter();
+      destinations.add(new SwapArg() {
+        @Override
+        public Position pos() {
+          return new Position(center.add(0, .5, 0));
+        }
+
+        @Override
+        public @Nullable Delegate<? extends Entity> entity() {
+          return null;
+        }
+      });
     }
 
     for (var source : sources) {
-      var target = Util.randomOf(targets).absolute().add(0, .5, 0);
-      var distance = Math.sqrt(source.get().blockPosition().distToCenterSqr(target));
+      var dest = Util.randomOf(destinations).pos().absolute();
+      var distance = Math.sqrt(source.pos().blockPos().distToCenterSqr(dest));
       context.mana().consume((int) distance);
-      source.update(entity ->
+      Objects.requireNonNull(source.entity()).update(entity ->
           EffectUtils.teleport(context.world(), entity,
-              new TeleportTransition(context.world(), target, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
+              new TeleportTransition(context.world(), dest, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
     }
+  }
+
+  private interface SwapArg {
+    Position pos();
+
+    @Nullable Delegate<? extends Entity> entity();
+  }
+
+  private List<? extends SwapArg> interpretSwapArg(Spell arg, SpellContext context) throws InterpretError {
+    if (arg.morpheme() instanceof ReadMorpheme) {
+      var args = new ArrayList<SwapArg>();
+      for (var a : arg.connected()) {
+        args.addAll(interpretSwapArg(a, context).stream().map(x -> new SwapArg() {
+          @Override
+          public Position pos() {
+            return x.pos();
+          }
+
+          @Override
+          public @Nullable Delegate<? extends Entity> entity() {
+            return null;
+          }
+        }).toList());
+      }
+      return args;
+    }
+
+    if (arg.morpheme().supported.contains(Type.ENTITIES)) {
+      var entities = arg.morpheme().interpretAsEntities(arg, context).stream().map(entity -> new SwapArg() {
+        @Override
+        public Position pos() {
+          return new Position(entity.get().position());
+        }
+
+        @Override
+        public Delegate<? extends Entity> entity() {
+          return entity;
+        }
+      }).toList();
+
+      if (!entities.isEmpty()) {
+        return entities;
+      }
+    }
+
+    if (arg.morpheme().supported.contains(Type.POSITION)) {
+      var positions = arg.morpheme().interpretAsPositions(arg, context).stream().map(position -> new SwapArg() {
+        @Override
+        public Position pos() {
+          return position;
+        }
+
+        @Override
+        public @Nullable Delegate<? extends Entity> entity() {
+          return null;
+        }
+      }).toList();
+
+      if (!positions.isEmpty()) {
+        return positions;
+      }
+    }
+
+    return List.of();
   }
 }

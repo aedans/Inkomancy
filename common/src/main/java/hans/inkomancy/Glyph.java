@@ -44,13 +44,14 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
       _+++_
       """);
 
+  public static final List<Glyph> AMBIGUOUS = List.of(
+      Glyph.create(SelfMorpheme.INSTANCE, 1, """
+          _+_
+          +++
+          _+_
+          """));
+
   public static final List<Glyph> GLYPHS = new ArrayList<>(List.of(
-      Glyph.create(MarkMorpheme.INSTANCE, 2, """
-          ?_+_?
-          _+++_
-          ++_++
-          _+++_
-          """),
       Glyph.create(BetweenMorpheme.INSTANCE, 0, """
           _++_
           ++_+
@@ -88,11 +89,6 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           +__
           +++
           _++
-          """),
-      Glyph.create(SelfMorpheme.INSTANCE, 1, """
-          _+_
-          +++
-          _+_
           """),
       Glyph.create(MatchMorpheme.INSTANCE, 1, """
           +++
@@ -186,6 +182,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
     }
 
     GLYPHS.addAll(manifestGlyphs);
+    GLYPHS.addAll(AMBIGUOUS);
     GLYPHS.add(START);
   }
 

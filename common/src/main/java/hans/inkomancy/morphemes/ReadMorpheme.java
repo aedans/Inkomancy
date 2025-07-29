@@ -10,7 +10,7 @@ public class ReadMorpheme extends Morpheme {
   public static final ReadMorpheme INSTANCE = new ReadMorpheme();
 
   private ReadMorpheme() {
-    super("read", Set.of(Type.SPELL));
+    super("read", Set.of(Type.SPELL, Type.POSITION));
   }
 
   @Override

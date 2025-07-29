@@ -93,7 +93,13 @@ public record SpellParser(ServerLevel world, InkBlock block) {
         var connectorBlocks = new ArrayList<BlockPos>();
         connectorBlocks.add(connector.pos());
 
-        while (true) {
+        loop: while (true) {
+          for (var glyph : Glyph.AMBIGUOUS) {
+            if (glyph.test(world, glyphPos, localTransform, block)) {
+              break loop;
+            }
+          }
+
           if (Glyph.FORWARDS.test(world, glyphPos, localTransform, block)) {
             connectorBlocks.add(glyphPos);
             glyphPos = glyphPos.relative(localTransform.forwards());

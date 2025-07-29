@@ -43,7 +43,6 @@ public abstract class Morpheme {
         ForeverMorpheme.INSTANCE,
         GrowMorpheme.INSTANCE,
         HoleMorpheme.INSTANCE,
-        MarkMorpheme.INSTANCE,
         ReadMorpheme.INSTANCE,
         RepairMorpheme.INSTANCE,
         SelfMorpheme.INSTANCE,
@@ -128,6 +127,10 @@ public abstract class Morpheme {
   public record Position(Vec3 absolute, BlockPos blockPos) {
     public Position(BlockPos pos) {
       this(pos.getCenter(), pos);
+    }
+
+    public Position(Vec3 absolute) {
+      this(absolute, new BlockPos((int) absolute.x, (int) absolute.y, (int) absolute.z));
     }
   }
 
