@@ -18,6 +18,7 @@ import java.util.Random;
 
 public class SpellScribeItem extends Item {
   public final Ink ink;
+  public int i = 0;
 
   public SpellScribeItem(Item.Properties settings, Ink ink) {
     super(settings);

@@ -39,6 +39,16 @@ public abstract class Morpheme {
     return new Morpheme[]{
         BetweenMorpheme.INSTANCE,
         BreakMorpheme.INSTANCE,
+        DirectionMorpheme.LEFT,
+        DirectionMorpheme.RIGHT,
+        DirectionMorpheme.FORWARDS,
+        DirectionMorpheme.BACKWARDS,
+        DirectionMorpheme.FORWARDS_LEFT,
+        DirectionMorpheme.FORWARDS_RIGHT,
+        DirectionMorpheme.BACKWARDS_LEFT,
+        DirectionMorpheme.BACKWARDS_RIGHT,
+        DirectionMorpheme.UP,
+        DirectionMorpheme.DOWN,
         ForeverMorpheme.INSTANCE,
         GrowMorpheme.INSTANCE,
         HoleMorpheme.INSTANCE,
@@ -130,7 +140,7 @@ public abstract class Morpheme {
     }
 
     public Position(Vec3 absolute) {
-      this(absolute, new BlockPos((int) absolute.x, (int) absolute.y, (int) absolute.z));
+      this(absolute, BlockPos.containing(absolute.x, absolute.y, absolute.z));
     }
   }
 }

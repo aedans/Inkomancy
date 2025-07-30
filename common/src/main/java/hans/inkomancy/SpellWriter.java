@@ -22,7 +22,8 @@ public record SpellWriter(Random random, Level world) {
       }
     }
 
-    glyphs.push(new PositionedGlyph(rootPos, transform.forwards(), glyph, box.inflatedBy(1)));
+    var positionedGlyph = new PositionedGlyph(rootPos, transform.forwards(), glyph, box.inflatedBy(1));
+    glyphs.push(positionedGlyph);
 
     var connectors = glyph.getConnectors(rootPos, transform);
     Collections.shuffle(connectors);
@@ -39,6 +40,9 @@ public record SpellWriter(Random random, Level world) {
       }
 
       if (!canConnect) {
+        while (glyphs.peek() != positionedGlyph) {
+          glyphs.pop();
+        }
         glyphs.pop();
         return false;
       }

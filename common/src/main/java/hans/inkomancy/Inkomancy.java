@@ -110,6 +110,7 @@ public final class Inkomancy {
   public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem.Instance(itemSettings(key)));
   public static final RegistrySupplier<Item> MAGMA_PICKAXE = registerItem("magma_pickaxe", key -> new MagicItem.PickaxeInstance(ToolMaterial.IRON, 1.0F, -2.8F, itemSettings(key)));
   public static final RegistrySupplier<Item> VOID_SHOVEL = registerItem("void_shovel", key -> new MagicItem.ShovelInstance(ToolMaterial.IRON, 1.5F, -3.0F, itemSettings(key)));
+  public static final RegistrySupplier<Item> HAMMER = registerItem("hammer", key -> new MagicItem.PickaxeInstance(ToolMaterial.IRON, 1.0f, -2.8f, itemSettings(key)));
 
   public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new InkHelperItem(itemSettings(key)));
   public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
@@ -136,6 +137,7 @@ public final class Inkomancy {
     map.put(FLOWER_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
     map.put(MAGMA_PICKAXE.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
     map.put(VOID_SHOVEL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(MatchMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
+    map.put(HAMMER.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(BreakMorpheme.INSTANCE, new Spell(BetweenMorpheme.INSTANCE, new Spell(DirectionMorpheme.FORWARDS_RIGHT, new Spell(DirectionMorpheme.UP, new Spell(HoleMorpheme.INSTANCE))), new Spell(DirectionMorpheme.BACKWARDS_LEFT, new Spell(DirectionMorpheme.DOWN, new Spell(HoleMorpheme.INSTANCE)))))));
 
     return map;
   }

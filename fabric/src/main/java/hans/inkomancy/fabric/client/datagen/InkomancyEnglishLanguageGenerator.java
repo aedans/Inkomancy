@@ -20,7 +20,7 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
   }
 
   private String capitalize(String s) {
-    return Arrays.stream(s.replace("_", " ").split(" ")).map(this::capitalizeWord).reduce("", (a, b) -> a + " " + b).trim();
+    return Arrays.stream(s.replace("_", " ").split("[ _]")).map(this::capitalizeWord).reduce("", (a, b) -> a + " " + b).trim();
   }
 
   @Override
@@ -48,6 +48,7 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
     translationBuilder.add(Inkomancy.FLOWER_WAND.get(), "Flower Wand");
     translationBuilder.add(Inkomancy.MAGMA_PICKAXE.get(), "Magma Pickaxe");
     translationBuilder.add(Inkomancy.VOID_SHOVEL.get(), "Void Shovel");
+    translationBuilder.add(Inkomancy.HAMMER.get(), "Blast Pickaxe");
 
     translationBuilder.add(Inkomancy.INK_BALL.get(), "Ink Ball");
   }
