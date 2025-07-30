@@ -49,6 +49,74 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           _+_
           +++
           _+_
+          """),
+      Glyph.create(new DirectionMorpheme("forwards-left", -1, 1), 4, """
+          ??_+++_
+          ?_+++++
+          _+__+__
+          ++__+__
+          +++++++
+          ++__+__
+          _+__+_?
+          """),
+      Glyph.create(new DirectionMorpheme("forwards-right", 1, 1), 2, """
+          _+++_??
+          +++++_?
+          __+__+_
+          __+__++
+          +++++++
+          __+__++
+          ?_+__+_
+          """),
+      Glyph.create(new DirectionMorpheme("backwards-left", -1, -1), 4, """
+          _+__+_?
+          ++__+__
+          +++++++
+          ++__+__
+          _+__+__
+          ?_+++++
+          ??_+++_
+          """),
+      Glyph.create(new DirectionMorpheme("backwards-right", 1, 1), 2, """
+          ?_+__+_
+          __+__++
+          +++++++
+          __+__++
+          __+__+_
+          +++++_?
+          _+++_??
+          """),
+      Glyph.create(new DirectionMorpheme("forwards", 0, 1), 2, """
+          _+++_
+          +++++
+          __+__
+          __+__
+          +++++
+          __+__
+          ?_+_?
+          """),
+      Glyph.create(new DirectionMorpheme("backwards", 0, -1), 2, """
+          ?_+_?
+          __+__
+          +++++
+          __+__
+          __+__
+          +++++
+          _+++_
+          """),
+      Glyph.create(new DirectionMorpheme("left", -1, 0), 4, """
+          _+__+_?
+          ++__+__
+          +++++++
+          ++__+__
+          _+__+_?
+          """),
+      Glyph.create(new DirectionMorpheme("right", 1, 0), 2, """
+          ?_+__+_
+          __+__++
+          +++++++
+          __+__++
+          ?_+__+_
           """));
 
   public static final List<Glyph> GLYPHS = new ArrayList<>(List.of(
@@ -181,8 +249,8 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
       manifestGlyphs.add(new Glyph(new ManifestMorpheme(glyph.morpheme), width, height, glyph.center + 2, values));
     }
 
-    GLYPHS.addAll(manifestGlyphs);
     GLYPHS.addAll(AMBIGUOUS);
+    GLYPHS.addAll(manifestGlyphs);
     GLYPHS.add(START);
   }
 
