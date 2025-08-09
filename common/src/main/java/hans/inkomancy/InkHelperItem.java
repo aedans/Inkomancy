@@ -11,6 +11,6 @@ public class InkHelperItem extends Item {
 
   public static boolean hasHelper(ItemStack stack) {
     return stack.getEntityRepresentation() instanceof Player player
-        && player.getInventory().contains(x -> x.getItem() == Inkomancy.INK_HELPER.get());
+        && player.getInventory().contains(x -> x.getItem() == Inkomancy.INKY.get());
   }
 }

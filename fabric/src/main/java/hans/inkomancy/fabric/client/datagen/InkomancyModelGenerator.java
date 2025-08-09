@@ -192,6 +192,12 @@ public class InkomancyModelGenerator extends FabricModelProvider {
       generateInkBlockStateModel(generator, "conductive_ink", color, ConductiveInk.INSTANCE.getBlock(color));
 //      generateInkBlockStateModel(generator, "void_ink_", VoidInk.INSTANCE.getBlock());
     }
+
+    generator.woodProvider(Inkomancy.FOG_LOG.get()).logWithHorizontal(Inkomancy.FOG_LOG.get()).wood(Inkomancy.FOG_WOOD.get());
+    generator.woodProvider(Inkomancy.STRIPPED_FOG_LOG.get()).logWithHorizontal(Inkomancy.STRIPPED_FOG_LOG.get()).wood(Inkomancy.STRIPPED_FOG_WOOD.get());
+    generator.createTrivialCube(Inkomancy.FOG_PLANKS.get());
+    generator.createTrivialCube(Inkomancy.FOG_PLANKS_ERODED.get());
+    generator.createTrivialCube(Inkomancy.FOG_LEAVES.get());
   }
 
   @Override
@@ -206,8 +212,8 @@ public class InkomancyModelGenerator extends FabricModelProvider {
       generator.generateFlatItem(morpheme.getItem(), ModelTemplates.FLAT_ITEM);
     }
 
-    generator.generateFlatItem(Inkomancy.INK_HELPER.get(), ModelTemplates.FLAT_ITEM);
-    generator.generateFlatItem(Inkomancy.SPELL_SCRIBE.get(), ModelTemplates.FLAT_ITEM);
+    generator.generateFlatItem(Inkomancy.INKY.get(), ModelTemplates.FLAT_ITEM);
+    generator.generateFlatItem(Inkomancy.AMANUENSIS.get(), ModelTemplates.FLAT_ITEM);
     generator.generateFlatItem(Inkomancy.MIRROR.get(), ModelTemplates.FLAT_ITEM);
     generator.generateFlatItem(Inkomancy.BLUE_QUILL.get(), ModelTemplates.FLAT_ITEM);
     generator.generateFlatItem(Inkomancy.RED_QUILL.get(), ModelTemplates.FLAT_ITEM);

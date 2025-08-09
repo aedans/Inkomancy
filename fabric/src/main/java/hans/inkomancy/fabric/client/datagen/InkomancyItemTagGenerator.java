@@ -11,12 +11,12 @@ import net.minecraft.world.item.Item;
 
 import java.util.concurrent.CompletableFuture;
 
-public class InkomancyTagGenerator extends FabricTagProvider<Item> {
+public class InkomancyItemTagGenerator extends FabricTagProvider<Item> {
   public static final TagKey<Item> INK_TOOL_MATERIALS = TagKey.create(Registries.ITEM,
       ResourceLocation.fromNamespaceAndPath(Inkomancy.MOD_ID, "ink_tool_materials"));
 
-  public InkomancyTagGenerator(FabricDataOutput output,
-                               CompletableFuture<HolderLookup.Provider> registriesFuture) {
+  public InkomancyItemTagGenerator(FabricDataOutput output,
+                                   CompletableFuture<HolderLookup.Provider> registriesFuture) {
     super(output, Registries.ITEM, registriesFuture);
   }
 

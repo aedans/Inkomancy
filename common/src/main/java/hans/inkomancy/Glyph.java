@@ -161,24 +161,19 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           _+++
           """),
       Glyph.create(GrowMorpheme.INSTANCE, 1, """
+          ++_
           _++
           ++_
-          _+_
           """),
       Glyph.create(GrowMorpheme.INSTANCE, 1, """
+          _++
           ++_
           _++
-          _+_
           """),
-      Glyph.create(RepairMorpheme.INSTANCE, 1, """
-          __+
-          +++
-          ++_
-          """),
-      Glyph.create(RepairMorpheme.INSTANCE, 1, """
-          +__
-          +++
-          _++
+      Glyph.create(RepairMorpheme.INSTANCE, 2, """
+          ++_++
+          +++++
+          _+++_
           """),
       Glyph.create(MatchMorpheme.INSTANCE, 1, """
           +++

@@ -30,10 +30,6 @@ public class EffectUtils {
     world.playSound(null, pos, SoundEvents.BONE_MEAL_USE, SoundSource.NEUTRAL);
   }
 
-  public static void repairEffect(ServerLevel world, BlockPos pos) {
-    world.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.NEUTRAL);
-  }
-
   public static void smokeEffect(ServerLevel world, BlockPos pos) {
     var p = pos.getCenter();
     world.sendParticles(ParticleTypes.SMOKE, p.x(), p.y(), p.z(), 5, .25, .25, .25, 0);

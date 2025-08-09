@@ -20,8 +20,11 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -63,6 +66,14 @@ public final class Inkomancy {
     return ITEMS.register(rl, () -> item.apply(key));
   }
 
+  public static RegistrySupplier<Block> registerBlock(String name, Function<ResourceKey<Block>, Block> block) {
+    var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+    var key = ResourceKey.create(Registries.BLOCK, rl);
+    var blockGetter = BLOCKS.register(rl, () -> block.apply(key));
+    registerItem(name, (k) -> new BlockItem(blockGetter.get(), itemSettings(k)));
+    return blockGetter;
+  }
+
   public static RegistrySupplier<InkBlock> registerInkBlock(Ink ink, String color) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, color + "_" + ink.name + "_ink");
     var key = ResourceKey.create(Registries.BLOCK, rl);
@@ -102,7 +113,7 @@ public final class Inkomancy {
     );
   }
 
-  public static final RegistrySupplier<Item> SPELL_SCRIBE = registerItem("spell_scribe", key -> new SpellScribeItem(itemSettings(key), ArdentInk.INSTANCE));
+  public static final RegistrySupplier<Item> AMANUENSIS = registerItem("amanuensis", key -> new SpellScribeItem(itemSettings(key), ArdentInk.INSTANCE));
   public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem.Instance(itemSettings(key)));
   public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem.Instance(itemSettings(key)));
   public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem.Instance(itemSettings(key)));
@@ -112,9 +123,28 @@ public final class Inkomancy {
   public static final RegistrySupplier<Item> VOID_SHOVEL = registerItem("void_shovel", key -> new MagicItem.ShovelInstance(ToolMaterial.IRON, 1.5F, -3.0F, itemSettings(key)));
   public static final RegistrySupplier<Item> HAMMER = registerItem("hammer", key -> new MagicItem.PickaxeInstance(ToolMaterial.IRON, 1.0f, -2.8f, itemSettings(key)));
 
-  public static final RegistrySupplier<Item> INK_HELPER = registerItem("ink_helper", key -> new InkHelperItem(itemSettings(key)));
+  public static final RegistrySupplier<Item> INKY = registerItem("inky", key -> new InkHelperItem(itemSettings(key)));
   public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
   public static final RegistrySupplier<EntityType<InkBallEntity>> INK_BALL_ENTITY = registerInkBallEntity();
+
+  public static final RegistrySupplier<Block> FOG_LOG = registerBlock("fog_log", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+      .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
+  public static final RegistrySupplier<Block> STRIPPED_FOG_LOG = registerBlock("stripped_fog_log", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+      .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
+  public static final RegistrySupplier<Block> FOG_WOOD = registerBlock("fog_wood", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+      .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
+  public static final RegistrySupplier<Block> STRIPPED_FOG_WOOD = registerBlock("stripped_fog_wood", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+      .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
+  public static final RegistrySupplier<Block> FOG_PLANKS = registerBlock("fog_planks", key -> new Block(blockSettings(key)
+      .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
+  public static final RegistrySupplier<Block> FOG_PLANKS_ERODED = registerBlock("fog_planks_eroded", key -> new Block(blockSettings(key)
+      .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
+  public static final RegistrySupplier<Block> FOG_LEAVES = registerBlock("fog_leaves", key -> new LeavesBlock(blockSettings(key)
+      .mapColor(MapColor.PLANT).strength(0.2F).randomTicks().sound(SoundType.GRASS).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY)
+      .isRedstoneConductor((a, b, c) -> false)
+      .isValidSpawn((a, b, c, entityType) -> entityType == EntityType.OCELOT || entityType == EntityType.PARROT)
+      .isSuffocating((a, b, c) -> false)
+      .isViewBlocking((a, b, c) -> false)));
 
   public static final RegistrySupplier<DataComponentType<Boolean>> CONJURED_COMPONENT_TYPE = DATA_COMPONENT_TYPE.register(
       ResourceLocation.fromNamespaceAndPath(MOD_ID, "conjured"),
@@ -156,15 +186,33 @@ public final class Inkomancy {
       items.add(stack);
     }
 
-    items.add(SPELL_SCRIBE.get().getDefaultInstance());
-    items.add(INK_HELPER.get().getDefaultInstance());
+    items.add(AMANUENSIS.get().getDefaultInstance());
+    items.add(INKY.get().getDefaultInstance());
     items.add(INK_BALL.get().getDefaultInstance());
+
+    for (var block : blocks()) {
+      items.add(block.asItem().getDefaultInstance());
+    }
 
     for (var morpheme : Morpheme.getMorphemes()) {
       items.add(morpheme.getItem().getDefaultInstance());
     }
 
     return items;
+  }
+
+  public static List<Block> blocks() {
+    var blocks = new ArrayList<Block>();
+
+    blocks.add(FOG_LOG.get());
+    blocks.add(STRIPPED_FOG_LOG.get());
+    blocks.add(FOG_WOOD.get());
+    blocks.add(STRIPPED_FOG_WOOD.get());
+    blocks.add(FOG_PLANKS.get());
+    blocks.add(FOG_PLANKS_ERODED.get());
+    blocks.add(FOG_LEAVES.get());
+
+    return blocks;
   }
 
   public static void init() {
@@ -203,7 +251,7 @@ public final class Inkomancy {
       if (tables.containsKey(key)) {
         ArrayList<LootPoolSingletonContainer.Builder<?>> items = new ArrayList<>();
 
-        items.add(LootItem.lootTableItem(SPELL_SCRIBE.get()).setWeight(2));
+        items.add(LootItem.lootTableItem(AMANUENSIS.get()).setWeight(2));
 
         for (var entry : magicItems().entrySet()) {
           items.add(LootItem.lootTableItem(entry.getKey()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), entry.getValue())));

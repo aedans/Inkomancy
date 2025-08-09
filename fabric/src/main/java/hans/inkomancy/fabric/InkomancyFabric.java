@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import hans.inkomancy.Inkomancy;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -21,7 +22,7 @@ public final class InkomancyFabric implements ModInitializer {
         Inkomancy.init();
 
         var tab = FabricItemGroup.builder()
-            .icon(() -> new ItemStack(Inkomancy.INK_HELPER.get()))
+            .icon(() -> new ItemStack(Inkomancy.INKY.get()))
             .title(Component.translatable("itemGroup.inkomancy.inkomancy_tab"))
             .build();
 
@@ -32,5 +33,8 @@ public final class InkomancyFabric implements ModInitializer {
                 group.accept(item);
             }
         });
+
+        StrippableBlockRegistry.register(Inkomancy.FOG_LOG.get(), Inkomancy.STRIPPED_FOG_LOG.get());
+        StrippableBlockRegistry.register(Inkomancy.FOG_WOOD.get(), Inkomancy.STRIPPED_FOG_WOOD.get());
     }
 }

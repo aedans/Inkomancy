@@ -19,6 +19,8 @@ public class SourceMorpheme extends Morpheme {
     for (var s : spell.connected()) {
       if (s.morpheme().supported.contains(Type.ACTION)) {
         s.morpheme().interpretAsAction(s, context, undo);
+      } else if (s.morpheme().supported.contains(Type.ITEMS)) {
+        s.morpheme().interpretAsItems(s, context);
       }
     }
   }
