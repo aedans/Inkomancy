@@ -28,15 +28,6 @@ public class ArdentInk extends Ink {
   }
 
   @Override
-  public int modifyMana(int initial, int mana, int amount) throws InterpretError {
-    mana -= amount;
-    if (mana < -initial) {
-      throw new InterpretError.OOM();
-    }
-    return mana;
-  }
-
-  @Override
   public void handleBlock(ServerLevel world, BlockPos pos, String color) {
     world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     EffectUtils.smokeEffect(world, pos);

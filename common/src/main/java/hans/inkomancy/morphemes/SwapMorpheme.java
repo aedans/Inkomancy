@@ -76,24 +76,6 @@ public class SwapMorpheme extends Morpheme {
   }
 
   private List<? extends SwapArg> interpretSwapArg(Spell arg, SpellContext context) throws InterpretError {
-    if (arg.morpheme() instanceof ReadMorpheme) {
-      var args = new ArrayList<SwapArg>();
-      for (var a : arg.connected()) {
-        args.addAll(interpretSwapArg(a, context).stream().map(x -> new SwapArg() {
-          @Override
-          public Position pos() {
-            return x.pos();
-          }
-
-          @Override
-          public @Nullable Delegate<? extends Entity> entity() {
-            return null;
-          }
-        }).toList());
-      }
-      return args;
-    }
-
     if (arg.morpheme().supported.contains(Type.ENTITIES)) {
       var entities = arg.morpheme().interpretAsEntities(arg, context).stream().map(entity -> new SwapArg() {
         @Override

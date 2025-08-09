@@ -85,8 +85,6 @@ public abstract class Ink {
 
   public abstract int getMana(Set<BlockPos> blocks);
 
-  public abstract int modifyMana(int initial, int mana, int amount) throws InterpretError;
-
   public abstract void handleBlock(ServerLevel world, BlockPos pos, String color);
 
   public abstract String lore();

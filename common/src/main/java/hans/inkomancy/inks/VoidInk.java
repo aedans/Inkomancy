@@ -26,11 +26,6 @@ public class VoidInk extends Ink {
   }
 
   @Override
-  public int modifyMana(int initial, int mana, int amount) {
-    return mana;
-  }
-
-  @Override
   public void handleBlock(ServerLevel world, BlockPos pos, String color) {
 
   }

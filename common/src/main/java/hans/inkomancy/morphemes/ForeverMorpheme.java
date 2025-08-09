@@ -24,12 +24,14 @@ public class ForeverMorpheme extends Morpheme {
 
     for (var modifier : modifiers) {
       for (var target : targets) {
-        context.mana().consume(256);
+        if (!context.mana().canConsume(256)) {
+          break;
+        }
+
         if (modifier.apply(target)) {
           EffectUtils.enchantEffect(context.world(), spell.pos());
+          context.mana().consume(256);
           break;
-        } else {
-          context.mana().produce(256);
         }
       }
     }

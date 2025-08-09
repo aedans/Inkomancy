@@ -36,7 +36,7 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
     translationBuilder.add("tag.item.inkomancy.ink_tool_materials", "Ink Tool Materials");
 
     for (var morpheme : Morpheme.getMorphemes()) {
-      translationBuilder.add(morpheme.getItem(), capitalize(morpheme.name) + " Morpheme");
+      translationBuilder.add(morpheme.getItem(), capitalize(morpheme.name) + " Glyph");
     }
 
     translationBuilder.add(Inkomancy.INK_HELPER.get(), "Inky");

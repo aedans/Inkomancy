@@ -26,15 +26,6 @@ public class ConductiveInk extends Ink {
   }
 
   @Override
-  public int modifyMana(int initial, int mana, int amount) throws InterpretError {
-    mana -= amount;
-    if (mana < 0) {
-      throw new InterpretError.OOM();
-    }
-    return mana;
-  }
-
-  @Override
   public void handleBlock(ServerLevel world, BlockPos pos, String color) {
     EffectUtils.dustEffect(world, pos, color);
   }
