@@ -4,7 +4,6 @@ import hans.inkomancy.*;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -17,10 +16,9 @@ public class ForeverMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     var args = new Args(spell, context);
-    var items = args.get(Type.ITEMS, m -> m::interpretAsItems)
-        .stream().flatMap(List::stream).toList();
+    var items = args.getFlat(Type.ITEMS, m -> m::interpretAsItems).toList();
     var modifiers = items.stream().map(this::asModifier).filter(Objects::nonNull).toList();
     var targets = items.stream().filter(item -> asModifier(item) == null).toList();
 
@@ -36,7 +34,7 @@ public class ForeverMorpheme extends Morpheme {
       }
     }
 
-    var spells = args.get(Type.SPELL, m -> m::interpretAsSpell);
+    var spells = args.get(Type.SPELL, m -> m::interpretAsSpell).toList();
     for (var s : spells) {
       for (var target : targets) {
         context.mana().consume(256);

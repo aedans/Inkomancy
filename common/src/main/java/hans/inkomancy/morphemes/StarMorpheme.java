@@ -13,7 +13,7 @@ public class StarMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     context.mana().consume(1);
     ThrowableItemProjectile.spawnProjectileFromRotation(InkBallEntity::new, context.world(), Inkomancy.INK_BALL.get().getDefaultInstance(), context.caster(), 0, 1F, 1);
     EffectUtils.inkEffect(context.world(), context.caster().blockPosition());

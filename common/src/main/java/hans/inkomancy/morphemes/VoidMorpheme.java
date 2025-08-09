@@ -26,15 +26,14 @@ public class VoidMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     var colors = getColors(spell, context);
     var server = (InkomancyLevelData) context.world().getServer().getWorldData();
     store(spell, context, colors, server);
   }
 
   public void store(Spell spell, SpellContext context, List<String> colors, InkomancyLevelData server) throws InterpretError {
-    var items = new Args(spell, context).get(Type.ITEMS, m -> m::interpretAsItems)
-        .stream().flatMap(List::stream).toList();
+    var items = new Args(spell, context).getFlat(Type.ITEMS, m -> m::interpretAsItems).toList();
     for (var item : items) {
       var leftover = server.inkomancy$getVoidContainer(colors).addItem(item.get());
       if (leftover.isEmpty()) {

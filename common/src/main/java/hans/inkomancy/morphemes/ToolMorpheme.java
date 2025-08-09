@@ -21,8 +21,7 @@ public class ToolMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    var items = new Args(spell, context).get(Type.ITEMS, m -> m::interpretAsItems)
-        .stream().flatMap(List::stream).toList();
+    var items = new Args(spell, context).getFlat(Type.ITEMS, m -> m::interpretAsItems).toList();
     var toolTags = toolTags(context);
     var tools = new HashSet<Item>();
     for (var item : items) {

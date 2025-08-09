@@ -13,6 +13,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class Morpheme {
   public static final Codec<Morpheme> CODEC = Codec.STRING.xmap(Morpheme::of, (m) -> m.name);
@@ -61,6 +63,7 @@ public abstract class Morpheme {
         SwapMorpheme.INSTANCE,
         ToolMorpheme.INSTANCE,
         TransmuteMorpheme.INSTANCE,
+        UndoMorpheme.INSTANCE,
         VoidMorpheme.INSTANCE
     };
   }
@@ -91,13 +94,13 @@ public abstract class Morpheme {
     throw new InterpretError.Conversion(this, Type.POSITION);
   }
 
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     throw new InterpretError.Conversion(this, Type.ACTION);
   }
 
   public void interpret(Spell spell, SpellContext context) {
     try {
-      interpretAsAction(spell, context);
+      interpretAsAction(spell, context, false);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -121,7 +124,13 @@ public abstract class Morpheme {
       this(new ArrayList<>(spell.connected()), spell, context);
     }
 
-    public <T> List<T> get(Type type, Function<Morpheme, Interpreter<T>> f) throws InterpretError {
+    public <T> Stream<T> getFlat(Type type, Function<Morpheme, Interpreter<List<T>>> f) throws InterpretError {
+      var list = get(type, f).flatMap(Collection::stream).collect(Collectors.toList());
+      Collections.shuffle(list);
+      return list.stream();
+    }
+
+    public <T> Stream<T> get(Type type, Function<Morpheme, Interpreter<T>> f) throws InterpretError {
       var list = new ArrayList<T>();
       for (var s : List.copyOf(connected)) {
         if (s.morpheme().supported.contains(type)) {
@@ -130,7 +139,7 @@ public abstract class Morpheme {
         }
       }
       Collections.shuffle(list);
-      return list;
+      return list.stream();
     }
   }
 

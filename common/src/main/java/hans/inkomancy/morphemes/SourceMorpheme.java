@@ -15,10 +15,10 @@ public class SourceMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     for (var s : spell.connected()) {
       if (s.morpheme().supported.contains(Type.ACTION)) {
-        s.morpheme().interpretAsAction(s, context);
+        s.morpheme().interpretAsAction(s, context, undo);
       }
     }
   }

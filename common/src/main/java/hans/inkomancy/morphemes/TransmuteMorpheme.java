@@ -16,8 +16,7 @@ public class TransmuteMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    var inputs = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
-        .stream().flatMap(List::stream).toList();
+    var inputs = new Args(spell, context).getFlat(Type.ITEMS, x -> x::interpretAsItems).toList();
 
     for (var item : inputs) {
       var inventory = new SingleRecipeInput(item.get());
@@ -32,7 +31,7 @@ public class TransmuteMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     interpretAsItems(spell, context);
   }
 

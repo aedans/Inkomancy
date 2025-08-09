@@ -4,10 +4,7 @@ import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.BonemealableBlock;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class GrowMorpheme extends Morpheme {
   public static final GrowMorpheme INSTANCE = new GrowMorpheme();
@@ -17,10 +14,8 @@ public class GrowMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var centers = new Args(spell, context).get(Type.POSITION, m -> m::interpretAsPositions)
-        .stream().flatMap(List::stream).map(Position::blockPos).collect(Collectors.toList());
-    Collections.shuffle(centers);
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
+    var centers = new Args(spell, context).getFlat(Type.POSITION, m -> m::interpretAsPositions).map(Position::blockPos).toList();
     for (var center : centers) {
       for (var horizontal : new BlockPos[]{center, center.north(), center.east(), center.south(), center.west()}) {
         for (var pos : new BlockPos[]{horizontal, horizontal.above(), horizontal.below()}) {

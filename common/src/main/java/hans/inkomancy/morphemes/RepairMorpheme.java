@@ -2,7 +2,6 @@ package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
 
-import java.util.List;
 import java.util.Set;
 
 public class RepairMorpheme extends Morpheme {
@@ -13,9 +12,8 @@ public class RepairMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
-    var items = new Args(spell, context).get(Type.ITEMS, m -> m::interpretAsItems)
-        .stream().flatMap(List::stream).toList();
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
+    var items = new Args(spell, context).getFlat(Type.ITEMS, m -> m::interpretAsItems).toList();
     for (var item : items) {
       if (item.get().isDamaged()) {
         EffectUtils.repairEffect(context.world(), context.getPosition(spell, 1));

@@ -15,6 +15,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -83,15 +84,15 @@ public class InkBlock extends DirectionalBlock {
       var facing = world.getBlockState(start.getFirst()).getValue(InkBlock.FACING);
       var spell = parser.parseSpell(start.getFirst(), Transform2D.of(facing, start.getSecond()), Glyph.START, blocks, 0);
 
-      var mana = new ManaProvider(ink, ink.getMana(blocks));
-      var context = new SpellContext(server, (ServerPlayer) player, ink, mana, null, null);
-      spell.morpheme().interpret(spell, context);
-
       world.playSound(null, pos, ink.sound(), SoundSource.BLOCKS, 0.25F, 1.0F);
 
       for (var block : blocks) {
         ink.handleBlock(server, block, color);
       }
+
+      var mana = new ManaProvider(ink, ink.getMana(blocks));
+      var context = new SpellContext(server, (ServerPlayer) player, ink, mana, null, null);
+      spell.morpheme().interpret(spell, context);
     }
 
     return InteractionResult.SUCCESS;
@@ -132,8 +133,13 @@ public class InkBlock extends DirectionalBlock {
     world.setBlockAndUpdate(pos, newState);
   }
 
-  public static boolean isInvalidPlacement(Level world, BlockPos pos, Direction facing) {
+  public static boolean isInvalidPlacement(LevelReader world, BlockPos pos, Direction facing) {
     return !world.getBlockState(pos.relative(facing.getOpposite())).isFaceSturdy(world, pos, facing);
+  }
+
+  @Override
+  protected boolean canSurvive(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
+    return !isInvalidPlacement(levelReader, blockPos, blockState.getValue(FACING));
   }
 
   public BlockState getState(Level world, BlockPos pos, Direction facing) {

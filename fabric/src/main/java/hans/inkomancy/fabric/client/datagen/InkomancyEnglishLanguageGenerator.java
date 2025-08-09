@@ -48,7 +48,7 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
     translationBuilder.add(Inkomancy.FLOWER_WAND.get(), "Flower Wand");
     translationBuilder.add(Inkomancy.MAGMA_PICKAXE.get(), "Magma Pickaxe");
     translationBuilder.add(Inkomancy.VOID_SHOVEL.get(), "Void Shovel");
-    translationBuilder.add(Inkomancy.HAMMER.get(), "Blast Pickaxe");
+    translationBuilder.add(Inkomancy.HAMMER.get(), "Hammer");
 
     translationBuilder.add(Inkomancy.INK_BALL.get(), "Ink Ball");
   }

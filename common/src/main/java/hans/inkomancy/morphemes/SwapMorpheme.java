@@ -19,7 +19,7 @@ public class SwapMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     var args = new ArrayList<SwapArg>();
     for (var arg : spell.connected()) {
       args.addAll(interpretSwapArg(arg, context));

@@ -7,7 +7,6 @@ import hans.inkomancy.SpellContext;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +35,7 @@ public class DirectionMorpheme extends Morpheme {
 
   @Override
   public List<Position> interpretAsPositions(Spell spell, SpellContext context) throws InterpretError {
-    var positions = new Args(spell, context).get(Type.POSITION, m -> m::interpretAsPositions).stream().flatMap(Collection::stream).toList();
+    var positions = new Args(spell, context).getFlat(Type.POSITION, m -> m::interpretAsPositions).toList();
     var facing = context.caster() != null ? context.caster().getDirection() : spell.dir() != null ? spell.dir() : Direction.NORTH;
     return positions.stream().map(pos -> {
       Vec3 newPos = pos.absolute();

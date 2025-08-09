@@ -113,6 +113,18 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           __+__++
           ?_+__+_
           """),
+      Glyph.create(UndoMorpheme.INSTANCE, 1, """
+          ++++
+          +__+
+          +__+
+          _+++
+          """),
+      Glyph.create(UndoMorpheme.INSTANCE, 2, """
+          ++++
+          +__+
+          +__+
+          +++_
+          """),
       Glyph.create(SelfMorpheme.INSTANCE, 1, """
           _+_
           +++

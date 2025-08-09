@@ -41,11 +41,10 @@ public class HoleMorpheme extends Morpheme {
   }
 
   @Override
-  public void interpretAsAction(Spell spell, SpellContext context) throws InterpretError {
+  public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
     var pos = context.getPosition(spell, 1).getCenter();
 
-    var items = new Args(spell, context).get(Type.ITEMS, x -> x::interpretAsItems)
-        .stream().flatMap(List::stream).toList();
+    var items = new Args(spell, context).getFlat(Type.ITEMS, x -> x::interpretAsItems).toList();
     for (var delegate : items) {
       var entity = new ItemEntity(context.world(), pos.x(), pos.y(), pos.z(), delegate.get());
       context.world().addFreshEntity(entity);
