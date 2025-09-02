@@ -10,7 +10,7 @@ public class ManaProvider {
   }
 
   public boolean canConsume(int amount) {
-    return amount >= current;
+    return amount <= current;
   }
 
   public void consume(int amount) throws InterpretError {
