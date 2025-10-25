@@ -92,5 +92,10 @@ public class VoidMorpheme extends Morpheme {
         set(null);
       }
     }
+
+    @Override
+    public boolean mutable() {
+      return true;
+    }
   }
 }

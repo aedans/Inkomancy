@@ -1,11 +1,13 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
+import hans.inkomancy.mixin.ShapedRecipeAccessorMixin;
+import hans.inkomancy.mixin.ShapelessRecipeAccessorMixin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TransmuteMorpheme extends Morpheme {
   public static final TransmuteMorpheme INSTANCE = new TransmuteMorpheme();
@@ -17,17 +19,14 @@ public class TransmuteMorpheme extends Morpheme {
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
     var inputs = new Args(spell, context).getFlat(Type.ITEMS, x -> x::interpretAsItems).toList();
-
-    for (var item : inputs) {
-      var inventory = new SingleRecipeInput(item.get());
-      if (doTransmuteSingle(item, inventory, spell, context, TransmutationRecipe.Type.INSTANCE, 4)) {
-        continue;
-      }
-
-      doTransmuteSingle(item, inventory, spell, context, RecipeType.SMELTING, 2);
+    var ingredients = inputs.stream().filter(Delegate::mutable).toList();
+    var result = Util.randomOf(inputs.stream().filter(x -> !x.mutable()).toList()).get();
+    var success = transmuteInto(ingredients, result, context);
+    if (success != null) {
+      return List.of(new Delegate.Instance<>(success));
+    } else {
+      return List.of();
     }
-
-    return inputs;
   }
 
   @Override
@@ -35,14 +34,53 @@ public class TransmuteMorpheme extends Morpheme {
     interpretAsItems(spell, context);
   }
 
-  public <T extends RecipeInput> boolean doTransmuteSingle(
-      Delegate<ItemStack> target, T inventory, Spell spell, SpellContext context, RecipeType<? extends Recipe<T>> recipe, int mana) throws InterpretError {
-    var match = context.world().recipeAccess().getRecipeFor(recipe, inventory, context.world());
-    if (match.isPresent()) {
-      context.mana().consume(mana * target.get().getCount());
-      target.modify(item -> match.get().value().assemble(inventory, context.world().registryAccess()).copyWithCount(item.getCount()));
-      EffectUtils.transmuteEffect(context.world(), context.getPosition(spell, 1));
+  public @Nullable ItemStack transmuteInto(List<? extends Delegate<ItemStack>> inputs, ItemStack output, SpellContext context) throws InterpretError {
+    var recipes = context.world().recipeAccess().getRecipes();
+    for (var holder : recipes) {
+      if (holder.value() instanceof ShapedRecipe recipe && ItemStack.isSameItem(((ShapedRecipeAccessorMixin) recipe).inkomancy$result(), output)) {
+        if (transmuteIntoSingle(recipe.getIngredients(), inputs, context)) {
+          return ((ShapedRecipeAccessorMixin) recipe).inkomancy$result().copy();
+        }
+      }
+
+      if (holder.value() instanceof ShapelessRecipe recipe && ItemStack.isSameItem(((ShapelessRecipeAccessorMixin) recipe).inkomancy$result(), output)) {
+        if (transmuteIntoSingle(((ShapelessRecipeAccessorMixin) recipe).inkomancy$ingredients().stream().map(Optional::of).toList(), inputs, context)) {
+          return ((ShapelessRecipeAccessorMixin) recipe).inkomancy$result().copy();
+        }
+      }
     }
-    return match.isPresent();
+
+    return null;
+  }
+
+  public boolean transmuteIntoSingle(List<Optional<Ingredient>> recipeIngredients, List<? extends Delegate<ItemStack>> inputs, SpellContext context) throws InterpretError {
+    var consumed = new HashMap<Delegate<ItemStack>, Integer>();
+    var ingredients = recipeIngredients.stream()
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(ingredient -> inputs.stream().anyMatch(input -> {
+          var realCount = consumed.getOrDefault(input, 0);
+          var realInput = input.get().copyWithCount(input.get().getCount() - realCount);
+          if (realInput.getCount() > 0 && ingredient.test(realInput)) {
+            consumed.put(input, realCount + 1);
+            return true;
+          } else {
+            return false;
+          }
+        }))
+        .map(Optional::of)
+        .toList();
+
+    if (new HashSet<>(ingredients).containsAll(recipeIngredients)) {
+      context.mana().consume(1);
+
+      for (var entry : consumed.entrySet()) {
+        entry.getKey().update(x -> x.setCount(x.getCount() - entry.getValue()));
+      }
+
+      return true;
+    } else {
+      return false;
+    }
   }
 }

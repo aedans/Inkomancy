@@ -69,6 +69,11 @@ public class HoleMorpheme extends Morpheme {
     }
 
     @Override
+    public boolean mutable() {
+      return true;
+    }
+
+    @Override
     public void destroy() {
       entity.kill(context.world());
       EffectUtils.magicEffect(context.world(), entity.position());

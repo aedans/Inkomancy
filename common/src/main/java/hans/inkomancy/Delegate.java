@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface Delegate<T> {
+  boolean mutable();
+
   T get();
 
   void set(T modified);
@@ -23,9 +25,20 @@ public interface Delegate<T> {
 
   class Instance<T> implements Delegate<T> {
     private T t;
+    private final boolean mutable;
 
     public Instance(T t) {
+      this(t, true);
+    }
+
+    public Instance(T t, boolean mutable) {
       this.t = t;
+      this.mutable = mutable;
+    }
+
+    @Override
+    public boolean mutable() {
+      return mutable;
     }
 
     @Override
@@ -35,7 +48,9 @@ public interface Delegate<T> {
 
     @Override
     public void set(T modified) {
-      t = modified;
+      if (mutable) {
+        t = modified;
+      }
     }
 
     @Override

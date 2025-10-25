@@ -10,7 +10,9 @@
     "BlockMixin",
     "ItemMixin",
     "ItemStackMixin",
-    "PrimaryLevelDataMixin"
+    "PrimaryLevelDataMixin",
+    "ShapedRecipeAccessorMixin",
+    "ShapelessRecipeAccessorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

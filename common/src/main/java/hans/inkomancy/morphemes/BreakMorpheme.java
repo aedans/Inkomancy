@@ -99,5 +99,10 @@ public class BreakMorpheme extends Morpheme {
     public void destroy() {
       set(null);
     }
+
+    @Override
+    public boolean mutable() {
+      return true;
+    }
   }
 }

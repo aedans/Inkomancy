@@ -14,10 +14,10 @@ public class ManaProvider {
   }
 
   public void consume(int amount) throws InterpretError {
-    if (!canConsume(amount)) {
-      throw new InterpretError.OOM();
-    } else {
+    if (canConsume(amount)) {
       current -= amount;
+    } else {
+      throw new InterpretError.OOM();
     }
   }
 }
