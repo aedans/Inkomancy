@@ -61,12 +61,11 @@ public class TransmuteMorpheme extends Morpheme {
         .filter(ingredient -> inputs.stream().anyMatch(input -> {
           var realCount = consumed.getOrDefault(input, 0);
           var realInput = input.get().copyWithCount(input.get().getCount() - realCount);
-          if (realInput.getCount() > 0 && ingredient.test(realInput)) {
+          var isValid = realInput.getCount() > 0 && ingredient.test(realInput);
+          if (isValid) {
             consumed.put(input, realCount + 1);
-            return true;
-          } else {
-            return false;
           }
+          return isValid;
         }))
         .map(Optional::of)
         .toList();

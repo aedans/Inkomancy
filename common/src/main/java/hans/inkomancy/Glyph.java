@@ -150,6 +150,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           +_+
           +++
           """),
+      Glyph.create(SummonMorpheme.INSTANCE, 2, """
+          _+++_
+          _+_+_
+          +++++
+          _+++_
+          """),
       Glyph.create(DirectionMorpheme.UP, 1, """
           ?_+_
           _++_

@@ -60,6 +60,7 @@ public abstract class Morpheme {
         SelfMorpheme.INSTANCE,
         SourceMorpheme.INSTANCE,
         StarMorpheme.INSTANCE,
+        SummonMorpheme.INSTANCE,
         SwapMorpheme.INSTANCE,
         ToolMorpheme.INSTANCE,
         TransmuteMorpheme.INSTANCE,
