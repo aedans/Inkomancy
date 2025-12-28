@@ -23,6 +23,16 @@ public record TransmutationRecipe(Ingredient ingredient, ItemStack result) imple
   }
 
   @Override
+  public boolean canCraftInDimensions(int i, int j) {
+    return false;
+  }
+
+  @Override
+  public @NotNull ItemStack getResultItem(HolderLookup.Provider provider) {
+    return result;
+  }
+
+  @Override
   public @NotNull RecipeSerializer<? extends Recipe<SingleRecipeInput>> getSerializer() {
     return Serializer.INSTANCE;
   }
@@ -30,16 +40,6 @@ public record TransmutationRecipe(Ingredient ingredient, ItemStack result) imple
   @Override
   public @NotNull RecipeType<? extends Recipe<SingleRecipeInput>> getType() {
     return Type.INSTANCE;
-  }
-
-  @Override
-  public @NotNull PlacementInfo placementInfo() {
-    return PlacementInfo.create(ingredient);
-  }
-
-  @Override
-  public @NotNull RecipeBookCategory recipeBookCategory() {
-    return RecipeBookCategories.CRAFTING_MISC;
   }
 
   @Override

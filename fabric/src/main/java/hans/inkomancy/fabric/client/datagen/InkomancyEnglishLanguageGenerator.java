@@ -29,9 +29,5 @@ public class InkomancyEnglishLanguageGenerator extends FabricLanguageProvider {
     for (var item : Inkomancy.items()) {
       translationBuilder.add(item.getItem(), capitalize(item.getItem().toString().replace("inkomancy:", "")));
     }
-
-    for (var block : Inkomancy.blocks()) {
-      translationBuilder.add(block, capitalize(block.toString().replace("{", "").replace("}", "").replace("Block", "").replace("inkomancy:", "")));
-    }
   }
 }

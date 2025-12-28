@@ -11,12 +11,12 @@ import hans.inkomancy.Inkomancy;
 import hans.inkomancy.Morpheme;
 import hans.inkomancy.inks.ArdentInk;
 import hans.inkomancy.inks.ConductiveInk;
-import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.blockstates.*;
-import net.minecraft.client.data.models.model.ModelTemplates;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
+import net.minecraft.data.models.BlockModelGenerators;
+import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.data.models.blockstates.*;
+import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +31,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import static net.minecraft.core.Direction.*;
-import static net.minecraft.client.data.models.blockstates.VariantProperties.Rotation.*;
+import static net.minecraft.data.models.blockstates.VariantProperties.Rotation.*;
 
 public class InkomancyModelGenerator extends FabricModelProvider {
   public InkomancyModelGenerator(FabricDataOutput generator) {

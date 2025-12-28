@@ -18,14 +18,14 @@ public interface MagicItem {
   }
 
   class PickaxeInstance extends PickaxeItem implements MagicItem {
-    public PickaxeInstance(ToolMaterial toolMaterial, float f, float g, Properties properties) {
-      super(toolMaterial, f, g, properties);
+    public PickaxeInstance(Tier tier, Properties properties) {
+      super(tier, properties);
     }
   }
 
   class ShovelInstance extends ShovelItem implements MagicItem {
-    public ShovelInstance(ToolMaterial toolMaterial, float f, float g, Properties properties) {
-      super(toolMaterial, f, g, properties);
+    public ShovelInstance(Tier tier, Properties properties) {
+      super(tier, properties);
     }
   }
 

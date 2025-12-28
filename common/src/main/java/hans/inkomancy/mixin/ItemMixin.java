@@ -35,7 +35,7 @@ public abstract class ItemMixin {
 
     var blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
     if (blockHitResult.getType() == HitResult.Type.MISS && MagicItem.tryUseSpell(player, player.getItemInHand(hand), null)) {
-      cir.setReturnValue(InteractionResult.SUCCESS_SERVER);
+      cir.setReturnValue(InteractionResult.SUCCESS);
     }
   }
 
@@ -46,14 +46,7 @@ public abstract class ItemMixin {
     }
 
     if (context.getPlayer() != null && MagicItem.tryUseSpell(context.getPlayer(), context.getItemInHand(), context.getClickedPos())) {
-      cir.setReturnValue(InteractionResult.SUCCESS_SERVER);
-    }
-  }
-
-  @Inject(at = @At("HEAD"), method = "finishUsingItem")
-  public void finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<ItemStack> cir) {
-    if (itemStack.has(DataComponents.CONSUMABLE) && livingEntity instanceof Player player) {
-      MagicItem.tryUseSpell(player, itemStack, null);
+      cir.setReturnValue(InteractionResult.SUCCESS);
     }
   }
 }

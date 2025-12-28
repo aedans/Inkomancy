@@ -1,5 +1,6 @@
 package hans.inkomancy.mixin;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -14,5 +15,5 @@ public interface ShapelessRecipeAccessorMixin {
   ItemStack inkomancy$result();
 
   @Accessor("ingredients")
-  List<Ingredient> inkomancy$ingredients();
+  NonNullList<Ingredient> inkomancy$ingredients();
 }

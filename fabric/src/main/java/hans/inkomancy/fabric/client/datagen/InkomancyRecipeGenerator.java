@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,25 +20,21 @@ public class InkomancyRecipeGenerator extends FabricRecipeProvider {
   }
 
   @Override
-  protected @NotNull RecipeProvider createRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
-    return new RecipeProvider(provider, recipeOutput) {
-      @Override
-      public void buildRecipes() {
-        for (var i = 0; i < 16; i++) {
-          shapeless(RecipeCategory.MISC, ArdentInk.INSTANCE.getItem(Inkomancy.COLORS.get(i)))
-              .requires(Items.COAL)
-              .requires(Inkomancy.DYES.get(i))
-              .unlockedBy("has_coal", this.has(Items.COAL))
-              .save(this.output, Inkomancy.COLORS.get(i) + "_ardent_ink");
+  public void buildRecipes(RecipeOutput recipeOutput) {
+    for (int i = 0; i < 16; i++) {
+      String color = Inkomancy.COLORS.get(i);
+      ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ArdentInk.INSTANCE.getItem(color))
+          .requires(Items.COAL)
+          .requires(Inkomancy.DYES.get(i))
+          .unlockedBy("has_coal", has(Items.COAL))
+          .save(recipeOutput);
 
-          shapeless(RecipeCategory.MISC, ConductiveInk.INSTANCE.getItem(Inkomancy.COLORS.get(i)))
-              .requires(Items.REDSTONE)
-              .requires(Inkomancy.DYES.get(i))
-              .unlockedBy("has_redstone", this.has(Items.REDSTONE))
-              .save(this.output, Inkomancy.COLORS.get(i) + "_conductive_ink");
-        }
-      }
-    };
+      ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ConductiveInk.INSTANCE.getItem(color))
+          .requires(Items.REDSTONE)
+          .requires(Inkomancy.DYES.get(i))
+          .unlockedBy("has_redstone", has(Items.COAL))
+          .save(recipeOutput);
+    }
   }
 
   @Override

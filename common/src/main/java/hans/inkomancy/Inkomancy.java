@@ -52,14 +52,6 @@ public final class Inkomancy {
   public static final Registrar<RecipeSerializer<?>> RECIPE_SERIALIZER = MANAGER.get().get(Registries.RECIPE_SERIALIZER);
   public static final Registrar<RecipeType<?>> RECIPE_TYPE = MANAGER.get().get(Registries.RECIPE_TYPE);
 
-  public static BlockBehaviour.Properties blockSettings(ResourceKey<Block> key) {
-    return BlockBehaviour.Properties.of().setId(key);
-  }
-
-  public static Item.Properties itemSettings(ResourceKey<Item> key) {
-    return new Item.Properties().useItemDescriptionPrefix().setId(key);
-  }
-
   public static RegistrySupplier<Item> registerItem(String name, Function<ResourceKey<Item>, Item> item) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     var key = ResourceKey.create(Registries.ITEM, rl);
@@ -70,17 +62,16 @@ public final class Inkomancy {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     var key = ResourceKey.create(Registries.BLOCK, rl);
     var blockGetter = BLOCKS.register(rl, () -> block.apply(key));
-    registerItem(name, (k) -> new BlockItem(blockGetter.get(), itemSettings(k)));
+    registerItem(name, (k) -> new BlockItem(blockGetter.get(), new Item.Properties()));
     return blockGetter;
   }
 
   public static RegistrySupplier<InkBlock> registerInkBlock(Ink ink, String color) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, color + "_" + ink.name + "_ink");
-    var key = ResourceKey.create(Registries.BLOCK, rl);
     var sound = new SoundType(1, 1,
         SoundEvents.INK_SAC_USE, SoundEvents.EMPTY, SoundEvents.INK_SAC_USE, SoundEvents.EMPTY, SoundEvents.EMPTY);
     return BLOCKS.register(rl,
-        () -> new InkBlock(blockSettings(key)
+        () -> new InkBlock(BlockBehaviour.Properties.of()
             .noCollission()
             .noOcclusion()
             .instabreak()
@@ -90,56 +81,53 @@ public final class Inkomancy {
 
   public static RegistrySupplier<InkItem> registerInkItem(Ink ink, String color) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, color + "_" + ink.name + "_ink");
-    var key = ResourceKey.create(Registries.ITEM, rl);
-    return ITEMS.register(rl, () -> new InkItem(ink.getBlock(color), itemSettings(key)));
+    return ITEMS.register(rl, () -> new InkItem(ink.getBlock(color), new Item.Properties()));
   }
 
   public static RegistrySupplier<MorphemeItem> registerMorphemeItem(Morpheme morpheme) {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, morpheme.name + "_morpheme");
-    var key = ResourceKey.create(Registries.ITEM, rl);
-    return ITEMS.register(rl, () -> new MorphemeItem(morpheme, itemSettings(key)));
+    return ITEMS.register(rl, () -> new MorphemeItem(morpheme, new Item.Properties()));
   }
 
   public static RegistrySupplier<EntityType<InkBallEntity>> registerInkBallEntity() {
     var rl = ResourceLocation.fromNamespaceAndPath(MOD_ID, "ink_ball");
-    var key = ResourceKey.create(Registries.ENTITY_TYPE, rl);
     return ENTITY_TYPE.register(
         rl,
         () -> EntityType.Builder.<InkBallEntity>of(InkBallEntity::new, MobCategory.MISC)
             .sized(0.25F, 0.25F)
             .clientTrackingRange(4)
             .updateInterval(10)
-            .build(key)
+            .build("ink_ball")
     );
   }
 
-  public static final RegistrySupplier<Item> AMANUENSIS = registerItem("amanuensis", key -> new SpellScribeItem(itemSettings(key), ArdentInk.INSTANCE));
-  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem.Instance(itemSettings(key)));
-  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem.Instance(itemSettings(key)));
-  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem.Instance(itemSettings(key)));
-  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem.Instance(itemSettings(key)));
-  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem.Instance(itemSettings(key)));
-  public static final RegistrySupplier<Item> MAGMA_PICKAXE = registerItem("magma_pickaxe", key -> new MagicItem.PickaxeInstance(ToolMaterial.IRON, 1.0F, -2.8F, itemSettings(key)));
-  public static final RegistrySupplier<Item> VOID_SHOVEL = registerItem("void_shovel", key -> new MagicItem.ShovelInstance(ToolMaterial.IRON, 1.5F, -3.0F, itemSettings(key)));
-  public static final RegistrySupplier<Item> HAMMER = registerItem("hammer", key -> new MagicItem.PickaxeInstance(ToolMaterial.IRON, 1.0f, -2.8f, itemSettings(key)));
+  public static final RegistrySupplier<Item> AMANUENSIS = registerItem("amanuensis", key -> new SpellScribeItem(new Item.Properties(), ArdentInk.INSTANCE));
+  public static final RegistrySupplier<Item> MIRROR = registerItem("mirror", key -> new MagicItem.Instance(new Item.Properties()));
+  public static final RegistrySupplier<Item> BLUE_QUILL = registerItem("blue_quill", key -> new MagicItem.Instance(new Item.Properties()));
+  public static final RegistrySupplier<Item> RED_QUILL = registerItem("red_quill", key -> new MagicItem.Instance(new Item.Properties()));
+  public static final RegistrySupplier<Item> INK_WAND = registerItem("ink_wand", key -> new MagicItem.Instance(new Item.Properties()));
+  public static final RegistrySupplier<Item> FLOWER_WAND = registerItem("flower_wand", key -> new MagicItem.Instance(new Item.Properties()));
+  public static final RegistrySupplier<Item> MAGMA_PICKAXE = registerItem("magma_pickaxe", key -> new MagicItem.PickaxeInstance(Tiers.IRON, new Item.Properties()));
+  public static final RegistrySupplier<Item> VOID_SHOVEL = registerItem("void_shovel", key -> new MagicItem.ShovelInstance(Tiers.IRON, new Item.Properties()));
+  public static final RegistrySupplier<Item> HAMMER = registerItem("hammer", key -> new MagicItem.PickaxeInstance(Tiers.IRON, new Item.Properties()));
 
-  public static final RegistrySupplier<Item> INKY = registerItem("inky", key -> new InkHelperItem(itemSettings(key)));
-  public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(itemSettings(key)));
+  public static final RegistrySupplier<Item> INKY = registerItem("inky", key -> new InkHelperItem(new Item.Properties()));
+  public static final RegistrySupplier<Item> INK_BALL = registerItem("ink_ball", key -> new Item(new Item.Properties()));
   public static final RegistrySupplier<EntityType<InkBallEntity>> INK_BALL_ENTITY = registerInkBallEntity();
 
-  public static final RegistrySupplier<Block> FOG_LOG = registerBlock("fog_log", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+  public static final RegistrySupplier<Block> FOG_LOG = registerBlock("fog_log", key -> ExpectInkomancy.createRotatedPillarBlock(BlockBehaviour.Properties.of()
       .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
-  public static final RegistrySupplier<Block> STRIPPED_FOG_LOG = registerBlock("stripped_fog_log", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+  public static final RegistrySupplier<Block> STRIPPED_FOG_LOG = registerBlock("stripped_fog_log", key -> ExpectInkomancy.createRotatedPillarBlock(BlockBehaviour.Properties.of()
       .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
-  public static final RegistrySupplier<Block> FOG_WOOD = registerBlock("fog_wood", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+  public static final RegistrySupplier<Block> FOG_WOOD = registerBlock("fog_wood", key -> ExpectInkomancy.createRotatedPillarBlock(BlockBehaviour.Properties.of()
       .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
-  public static final RegistrySupplier<Block> STRIPPED_FOG_WOOD = registerBlock("stripped_fog_wood", key -> ExpectInkomancy.createRotatedPillarBlock(blockSettings(key)
+  public static final RegistrySupplier<Block> STRIPPED_FOG_WOOD = registerBlock("stripped_fog_wood", key -> ExpectInkomancy.createRotatedPillarBlock(BlockBehaviour.Properties.of()
       .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
-  public static final RegistrySupplier<Block> FOG_PLANKS = registerBlock("fog_planks", key -> new Block(blockSettings(key)
+  public static final RegistrySupplier<Block> FOG_PLANKS = registerBlock("fog_planks", key -> new Block(BlockBehaviour.Properties.of()
       .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
-  public static final RegistrySupplier<Block> FOG_PLANKS_ERODED = registerBlock("fog_planks_eroded", key -> new Block(blockSettings(key)
+  public static final RegistrySupplier<Block> FOG_PLANKS_ERODED = registerBlock("fog_planks_eroded", key -> new Block(BlockBehaviour.Properties.of()
       .mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
-  public static final RegistrySupplier<Block> FOG_LEAVES = registerBlock("fog_leaves", key -> new LeavesBlock(blockSettings(key)
+  public static final RegistrySupplier<Block> FOG_LEAVES = registerBlock("fog_leaves", key -> new LeavesBlock(BlockBehaviour.Properties.of()
       .mapColor(MapColor.PLANT).strength(0.2F).randomTicks().sound(SoundType.GRASS).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY)
       .isRedstoneConductor((a, b, c) -> false)
       .isValidSpawn((a, b, c, entityType) -> entityType == EntityType.OCELOT || entityType == EntityType.PARROT)

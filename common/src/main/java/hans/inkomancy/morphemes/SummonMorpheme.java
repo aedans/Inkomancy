@@ -1,7 +1,7 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.SpawnEggItem;
 import java.util.Set;
 
@@ -17,8 +17,8 @@ public class SummonMorpheme extends Morpheme {
     var items = new Args(spell, context).getFlat(Type.ITEMS, x -> x::interpretAsItems).toList();
     for (var item : items) {
       if (item.get().getItem() instanceof SpawnEggItem egg) {
-        var entityType = egg.getType(context.world().registryAccess(), item.get());
-        entityType.spawn(context.world(), item.get(), context.caster(), context.getPosition(spell, 2), EntitySpawnReason.SPAWN_ITEM_USE, false, false);
+        var entityType = egg.getType(item.get());
+        entityType.spawn(context.world(), item.get(), context.caster(), context.getPosition(spell, 2), MobSpawnType.MOB_SUMMONED, false, false);
       }
     }
   }

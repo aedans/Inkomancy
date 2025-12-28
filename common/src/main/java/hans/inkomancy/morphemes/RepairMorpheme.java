@@ -21,7 +21,7 @@ public class RepairMorpheme extends Morpheme {
 
     for (var item : items) {
       if (undo) {
-        if (item.get().nextDamageWillBreak()) {
+        if (item.get().getDamageValue() == item.get().getMaxDamage() - 1) {
           item.destroy();
         } else {
           item.update(stack -> stack.setDamageValue(stack.getDamageValue() + 1));
@@ -36,8 +36,7 @@ public class RepairMorpheme extends Morpheme {
     for (var entity : entities) {
       if (entity.get() instanceof LivingEntity livingEntity) {
         if (undo) {
-          var genericDamage = context.world().registryAccess().get(DamageTypes.GENERIC).orElseThrow();
-          livingEntity.hurtServer(context.world(), new DamageSource(genericDamage), 1);
+          livingEntity.hurt(livingEntity.damageSources().generic(), 1);
         } else {
           livingEntity.heal(1);
         }

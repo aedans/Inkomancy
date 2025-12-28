@@ -3,7 +3,7 @@ package hans.inkomancy.morphemes;
 import hans.inkomancy.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.level.portal.DimensionTransition;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class SwapMorpheme extends Morpheme {
       context.mana().consume((int) distance);
       Objects.requireNonNull(source.entity()).update(entity ->
           EffectUtils.teleport(context.world(), entity,
-              new TeleportTransition(context.world(), dest, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING)));
+              new DimensionTransition(context.world(), dest, entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), DimensionTransition.DO_NOTHING)));
     }
   }
 

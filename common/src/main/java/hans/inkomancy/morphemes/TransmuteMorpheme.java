@@ -35,10 +35,10 @@ public class TransmuteMorpheme extends Morpheme {
   }
 
   public @Nullable ItemStack transmuteInto(List<? extends Delegate<ItemStack>> inputs, ItemStack output, SpellContext context) throws InterpretError {
-    var recipes = context.world().recipeAccess().getRecipes();
+    var recipes = context.world().getRecipeManager().getRecipes();
     for (var holder : recipes) {
       if (holder.value() instanceof ShapedRecipe recipe && ItemStack.isSameItem(((ShapedRecipeAccessorMixin) recipe).inkomancy$result(), output)) {
-        if (transmuteIntoSingle(recipe.getIngredients(), inputs, context)) {
+        if (transmuteIntoSingle(recipe.getIngredients().stream().map(Optional::of).toList(), inputs, context)) {
           return ((ShapedRecipeAccessorMixin) recipe).inkomancy$result().copy();
         }
       }

@@ -17,8 +17,8 @@ public class InkBallEntity extends ThrowableItemProjectile {
     super(entityType, world);
   }
 
-  public InkBallEntity(ServerLevel world, LivingEntity shooter, ItemStack stack) {
-    super(Inkomancy.INK_BALL_ENTITY.get(), shooter, world, stack);
+  public InkBallEntity(ServerLevel world, LivingEntity shooter) {
+    super(Inkomancy.INK_BALL_ENTITY.get(), shooter, world);
   }
 
   @Override

@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -116,8 +115,8 @@ public class InkBlock extends DirectionalBlock {
 
   @Override
   protected void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock,
-                                 Orientation wireOrientation, boolean notify) {
-    super.neighborChanged(state, world, pos, sourceBlock, wireOrientation, notify);
+                                 BlockPos pos2, boolean notify) {
+    super.neighborChanged(state, world, pos, sourceBlock, pos2, notify);
 
     var newState = getState(world, pos, state.getValue(FACING));
     if (newState == null) {

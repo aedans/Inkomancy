@@ -5,6 +5,7 @@ import hans.inkomancy.Morpheme;
 import hans.inkomancy.Spell;
 import hans.inkomancy.SpellContext;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -41,15 +42,19 @@ public class DirectionMorpheme extends Morpheme {
       Vec3 newPos = pos.absolute();
 
       if (x < 0) {
-        newPos = newPos.add(facing.getCounterClockWise().getUnitVec3());
+        Vec3i vec = facing.getCounterClockWise().getNormal();
+        newPos = newPos.add(vec.getX(), vec.getY(), vec.getZ());
       } else if (x > 0) {
-        newPos = newPos.add(facing.getClockWise().getUnitVec3());
+        Vec3i vec = facing.getClockWise().getNormal();
+        newPos = newPos.add(vec.getX(), vec.getY(), vec.getZ());
       }
 
       if (y > 0) {
-        newPos = newPos.add(facing.getUnitVec3());
+        Vec3i vec = facing.getNormal();
+        newPos = newPos.add(vec.getX(), vec.getY(), vec.getZ());
       } else if (y < 0) {
-        newPos = newPos.add(facing.getOpposite().getUnitVec3());
+        Vec3i vec = facing.getOpposite().getNormal();
+        newPos = newPos.add(vec.getX(), vec.getY(), vec.getZ());
       }
 
       if (z > 0) {

@@ -9,8 +9,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 public class EffectUtils {
   public static void magicEffect(ServerLevel world, Vec3 pos) {
@@ -37,16 +38,17 @@ public class EffectUtils {
 
   public static void dustEffect(ServerLevel world, BlockPos pos, String color) {
     var p = pos.getCenter();
-    world.sendParticles(new DustParticleOptions(Inkomancy.HEXES.get(Inkomancy.COLORS.indexOf(color)), 1.0F), p.x(), p.y(), p.z(), 3, .25, .25, .25, 0);
+    int hex = Inkomancy.HEXES.get(Inkomancy.COLORS.indexOf(color));
+    world.sendParticles(new DustParticleOptions(Vec3.fromRGB24(hex).toVector3f(), 1.0F), p.x(), p.y(), p.z(), 3, .25, .25, .25, 0);
   }
 
   public static void transmuteEffect(ServerLevel world, BlockPos pos) {
     world.playSound(null, pos, SoundEvents.CRAFTER_CRAFT, SoundSource.NEUTRAL);
   }
 
-  public static void teleport(ServerLevel world, Entity entity, TeleportTransition to) {
+  public static void teleport(ServerLevel world, Entity entity, DimensionTransition to) {
     EffectUtils.teleportEffect(world, entity);
-    entity.teleport(to);
+    entity.teleportTo(to.pos().x, to.pos().y, to.pos().z);
     EffectUtils.teleportEffect(world, entity);
   }
 

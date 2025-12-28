@@ -51,7 +51,7 @@ public class SpellScribeItem extends Item {
 
         context.getLevel().playSound(null, context.getClickedPos(), SoundEvents.INK_SAC_USE, SoundSource.NEUTRAL);
 
-        return InteractionResult.SUCCESS_SERVER;
+        return InteractionResult.SUCCESS;
       }
     }
 
