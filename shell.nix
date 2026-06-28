@@ -1,4 +1,9 @@
-{ pkgs ? import <nixpkgs> { } }:
+# Pinned to nixos-26.05 @ 4062d36 so jdk21 always resolves to the same
+# store path (keeps .vscode/settings.json's java.jdt.ls.java.home stable).
+{ pkgs ? import (fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/4062d36ebeae843c750011eef6b61ec9a9dbc9a9.tar.gz";
+    sha256 = "0hha7lam2c2655f7m0w9jkn8pacmprzgcg3fg7jrnv479fcdh8y2";
+  }) { } }:
 
 pkgs.mkShell {
   name = "inkomancy";

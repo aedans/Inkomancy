@@ -1,0 +1,4 @@
+{
+  "java.jdt.ls.java.home": "/nix/store/vs2j17dr25ph3h1k4w1ngxnn8y5br1sa-openjdk-21.0.12+2/lib/openjdk",
+  "java.import.gradle.java.home": "/nix/store/vs2j17dr25ph3h1k4w1ngxnn8y5br1sa-openjdk-21.0.12+2/lib/openjdk"
+}
