@@ -1,8 +1,6 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Set;

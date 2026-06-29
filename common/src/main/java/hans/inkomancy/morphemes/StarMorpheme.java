@@ -1,8 +1,6 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-
 import java.util.Set;
 
 public class StarMorpheme extends Morpheme {
