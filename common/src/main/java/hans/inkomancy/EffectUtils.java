@@ -11,7 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public class EffectUtils {
   public static void magicEffect(ServerLevel world, Vec3 pos) {
