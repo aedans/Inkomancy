@@ -45,3 +45,7 @@ replay_*.log
 *.jfr
 
 common/src/generated
+
+# todo
+
+TODO/
