@@ -4,7 +4,6 @@ import hans.inkomancy.*;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
@@ -34,17 +33,12 @@ public class HoleMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    if (spell.connected().stream().anyMatch(s -> s.morpheme().supported.contains(Type.ENTITIES))) {
-      var entities = new Args(spell, context).getFlat(Type.ENTITIES, m -> m::interpretAsEntities).toList();
+    if (context.caster() != null && spell.connected().stream().anyMatch(s -> s.morpheme() == SelfMorpheme.INSTANCE)) {
+      var inventory = context.caster().getInventory();
       var items = new ArrayList<Delegate<ItemStack>>();
-      for (var entity : entities) {
-        if (entity.get() instanceof Player player) {
-          var inventory = player.getInventory();
-          for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
-            if (!inventory.getItem(slot).isEmpty()) {
-              items.add(new InventorySlotDelegate(inventory, slot));
-            }
-          }
+      for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+        if (!inventory.getItem(slot).isEmpty()) {
+          items.add(new InventorySlotDelegate(inventory, slot));
         }
       }
       return items;
