@@ -1,12 +1,15 @@
 package hans.inkomancy.morphemes;
 
 import hans.inkomancy.*;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,14 +33,30 @@ public class HoleMorpheme extends Morpheme {
   }
 
   @Override
-  public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) {
+  public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
+    var entities = new Args(spell, context).getFlat(Type.ENTITIES, m -> m::interpretAsEntities).toList();
+    if (!entities.isEmpty()) {
+      var items = new ArrayList<Delegate<ItemStack>>();
+      for (var entity : entities) {
+        if (entity.get() instanceof Player player) {
+          var inventory = player.getInventory();
+          for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            if (!inventory.getItem(slot).isEmpty()) {
+              items.add(new InventorySlotDelegate(inventory, slot));
+            }
+          }
+        }
+      }
+      return items;
+    }
+
     if (context.itemsInput() != null) {
       return context.itemsInput();
     }
 
     var box = getBox(spell, context);
-    var entities = context.world().getEntities(EntityTypeTest.forClass(ItemEntity.class), box, x -> true);
-    return entities.stream().map(entity -> new ItemStackEntityDelegate(context, entity)).toList();
+    var itemEntities = context.world().getEntities(EntityTypeTest.forClass(ItemEntity.class), box, x -> true);
+    return itemEntities.stream().map(entity -> new ItemStackEntityDelegate(context, entity)).toList();
   }
 
   @Override
@@ -56,6 +75,27 @@ public class HoleMorpheme extends Morpheme {
   public AABB getBox(Spell spell, SpellContext context) {
     var position = context.getPosition(spell, 1);
     return AABB.encapsulatingFullBlocks(position.offset(-1, -1, -1), position.offset(1, 1, 1));
+  }
+
+  public record InventorySlotDelegate(Container container, int slot) implements Delegate<ItemStack> {
+    public ItemStack get() {
+      return container.getItem(slot);
+    }
+
+    public void set(ItemStack modified) {
+      container.setItem(slot, modified);
+      container.setChanged();
+    }
+
+    @Override
+    public boolean mutable() {
+      return true;
+    }
+
+    @Override
+    public void destroy() {
+      set(ItemStack.EMPTY);
+    }
   }
 
   public record ItemStackEntityDelegate(SpellContext context, ItemEntity entity) implements Delegate<ItemStack> {
