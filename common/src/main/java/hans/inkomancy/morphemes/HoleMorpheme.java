@@ -34,8 +34,8 @@ public class HoleMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    var entities = new Args(spell, context).getFlat(Type.ENTITIES, m -> m::interpretAsEntities).toList();
-    if (!entities.isEmpty()) {
+    if (spell.connected().stream().anyMatch(s -> s.morpheme().supported.contains(Type.ENTITIES))) {
+      var entities = new Args(spell, context).getFlat(Type.ENTITIES, m -> m::interpretAsEntities).toList();
       var items = new ArrayList<Delegate<ItemStack>>();
       for (var entity : entities) {
         if (entity.get() instanceof Player player) {
