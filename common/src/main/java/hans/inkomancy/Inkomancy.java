@@ -165,7 +165,7 @@ public final class Inkomancy {
     map.put(FLOWER_WAND.get(), new Imbuement(cast, new Spell(SourceMorpheme.CAST, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
     map.put(MAGMA_PICKAXE.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
     map.put(VOID_SHOVEL.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(MatchMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))))));
-    map.put(HAMMER.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(BreakMorpheme.INSTANCE, new Spell(BetweenMorpheme.INSTANCE, new Spell(DirectionMorpheme.FORWARDS_RIGHT, new Spell(DirectionMorpheme.UP, new Spell(HoleMorpheme.INSTANCE))), new Spell(DirectionMorpheme.BACKWARDS_LEFT, new Spell(DirectionMorpheme.DOWN, new Spell(HoleMorpheme.INSTANCE))))))));
+    map.put(HAMMER.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(BreakMorpheme.INSTANCE, new Spell(ExpandMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))))));
 
     return map;
   }

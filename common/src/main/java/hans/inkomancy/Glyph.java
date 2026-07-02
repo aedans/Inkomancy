@@ -45,74 +45,6 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
       """);
 
   public static final List<Glyph> AMBIGUOUS = List.of(
-      Glyph.create(DirectionMorpheme.FORWARDS_LEFT, 4, """
-          ??_+++_
-          ?_+++++
-          _+__+__
-          ++__+__
-          +++++++
-          ++__+__
-          _+__+_?
-          """),
-      Glyph.create(DirectionMorpheme.FORWARDS_RIGHT, 2, """
-          _+++_??
-          +++++_?
-          __+__+_
-          __+__++
-          +++++++
-          __+__++
-          ?_+__+_
-          """),
-      Glyph.create(DirectionMorpheme.BACKWARDS_LEFT, 4, """
-          _+__+_?
-          ++__+__
-          +++++++
-          ++__+__
-          _+__+__
-          ?_+++++
-          ??_+++_
-          """),
-      Glyph.create(DirectionMorpheme.BACKWARDS_RIGHT, 2, """
-          ?_+__+_
-          __+__++
-          +++++++
-          __+__++
-          __+__+_
-          +++++_?
-          _+++_??
-          """),
-      Glyph.create(DirectionMorpheme.FORWARDS, 2, """
-          _+++_
-          +++++
-          __+__
-          __+__
-          +++++
-          __+__
-          ?_+_?
-          """),
-      Glyph.create(DirectionMorpheme.BACKWARDS, 2, """
-          ?_+_?
-          __+__
-          +++++
-          __+__
-          __+__
-          +++++
-          _+++_
-          """),
-      Glyph.create(DirectionMorpheme.LEFT, 4, """
-          _+__+_?
-          ++__+__
-          +++++++
-          ++__+__
-          _+__+_?
-          """),
-      Glyph.create(DirectionMorpheme.RIGHT, 2, """
-          ?_+__+_
-          __+__++
-          +++++++
-          __+__++
-          ?_+__+_
-          """),
       Glyph.create(UndoMorpheme.INSTANCE, 1, """
           ++++
           +__+
@@ -156,16 +88,6 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           +++++
           _+++_
           """),
-      Glyph.create(DirectionMorpheme.UP, 1, """
-          ?_+_
-          _++_
-          +++_
-          """),
-      Glyph.create(DirectionMorpheme.DOWN, 2, """
-          _+_?
-          _++_
-          _+++
-          """),
       Glyph.create(GrowMorpheme.INSTANCE, 1, """
           ++_
           _++
@@ -175,6 +97,11 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           _++
           ++_
           _++
+          """),
+      Glyph.create(ExpandMorpheme.INSTANCE, 2, """
+          +_+_+
+          +++++
+          +_+_+
           """),
       Glyph.create(RepairMorpheme.INSTANCE, 2, """
           ++_++

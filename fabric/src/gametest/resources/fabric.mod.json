@@ -6,7 +6,8 @@
   "environment": "*",
   "entrypoints": {
     "fabric-gametest": [
-      "hans.inkomancy.fabric.gametest.SwapGameTest"
+      "hans.inkomancy.fabric.gametest.SwapGameTest",
+      "hans.inkomancy.fabric.gametest.ExpandGameTest"
     ]
   },
   "depends": {
