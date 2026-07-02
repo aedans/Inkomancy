@@ -142,20 +142,30 @@ public final class Inkomancy {
       ResourceLocation.fromNamespaceAndPath(MOD_ID, "spell"),
       () -> DataComponentType.<Spell>builder().persistent(Spell.CODEC).networkSynchronized(Spell.PACKET_CODEC).build());
 
+  public static final RegistrySupplier<DataComponentType<Spell>> BREAK_SPELL_COMPONENT_TYPE = DATA_COMPONENT_TYPE.register(
+      ResourceLocation.fromNamespaceAndPath(MOD_ID, "break_spell"),
+      () -> DataComponentType.<Spell>builder().persistent(Spell.CODEC).networkSynchronized(Spell.PACKET_CODEC).build());
+
   public static final ResourceLocation INKOMANCY_TAB_RL = ResourceLocation.fromNamespaceAndPath(MOD_ID, "inkomancy");
   public static final ResourceKey<CreativeModeTab> INKOMANCY_TAB_RK = ResourceKey.create(Registries.CREATIVE_MODE_TAB, INKOMANCY_TAB_RL);
 
-  public static Map<Item, Spell> magicItems() {
-    var map = new LinkedHashMap<Item, Spell>();
+  // A pre-built spell together with the slot it occupies on the item.
+  public record Imbuement(DataComponentType<Spell> component, Spell spell) {
+  }
 
-    map.put(MIRROR.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(SwapMorpheme.INSTANCE, new Spell(SelfMorpheme.INSTANCE))));
-    map.put(RED_QUILL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
-    map.put(BLUE_QUILL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
-    map.put(INK_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(StarMorpheme.INSTANCE)));
-    map.put(FLOWER_WAND.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
-    map.put(MAGMA_PICKAXE.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))));
-    map.put(VOID_SHOVEL.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(MatchMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
-    map.put(HAMMER.get(), new Spell(SourceMorpheme.INSTANCE, new Spell(BreakMorpheme.INSTANCE, new Spell(BetweenMorpheme.INSTANCE, new Spell(DirectionMorpheme.FORWARDS_RIGHT, new Spell(DirectionMorpheme.UP, new Spell(HoleMorpheme.INSTANCE))), new Spell(DirectionMorpheme.BACKWARDS_LEFT, new Spell(DirectionMorpheme.DOWN, new Spell(HoleMorpheme.INSTANCE)))))));
+  public static Map<Item, Imbuement> magicItems() {
+    var map = new LinkedHashMap<Item, Imbuement>();
+    var cast = SPELL_COMPONENT_TYPE.get();
+    var onBreak = BREAK_SPELL_COMPONENT_TYPE.get();
+
+    map.put(MIRROR.get(), new Imbuement(cast, new Spell(SourceMorpheme.CAST, new Spell(SwapMorpheme.INSTANCE, new Spell(SelfMorpheme.INSTANCE)))));
+    map.put(RED_QUILL.get(), new Imbuement(cast, new Spell(SourceMorpheme.CAST, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
+    map.put(BLUE_QUILL.get(), new Imbuement(cast, new Spell(SourceMorpheme.CAST, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
+    map.put(INK_WAND.get(), new Imbuement(cast, new Spell(SourceMorpheme.CAST, new Spell(StarMorpheme.INSTANCE))));
+    map.put(FLOWER_WAND.get(), new Imbuement(cast, new Spell(SourceMorpheme.CAST, new Spell(GrowMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
+    map.put(MAGMA_PICKAXE.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(TransmuteMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE)))));
+    map.put(VOID_SHOVEL.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(MatchMorpheme.INSTANCE, new Spell(VoidMorpheme.INSTANCE, new Spell(HoleMorpheme.INSTANCE))))));
+    map.put(HAMMER.get(), new Imbuement(onBreak, new Spell(SourceMorpheme.BREAK, new Spell(BreakMorpheme.INSTANCE, new Spell(BetweenMorpheme.INSTANCE, new Spell(DirectionMorpheme.FORWARDS_RIGHT, new Spell(DirectionMorpheme.UP, new Spell(HoleMorpheme.INSTANCE))), new Spell(DirectionMorpheme.BACKWARDS_LEFT, new Spell(DirectionMorpheme.DOWN, new Spell(HoleMorpheme.INSTANCE))))))));
 
     return map;
   }
@@ -170,7 +180,7 @@ public final class Inkomancy {
 
     for (var item : magicItems().entrySet()) {
       ItemStack stack = item.getKey().getDefaultInstance();
-      stack.set(SPELL_COMPONENT_TYPE.get(), item.getValue());
+      stack.set(item.getValue().component(), item.getValue().spell());
       items.add(stack);
     }
 
@@ -183,7 +193,9 @@ public final class Inkomancy {
     }
 
     for (var morpheme : Morpheme.getMorphemes()) {
-      items.add(morpheme.getItem().getDefaultInstance());
+      if (morpheme.hasGlyph()) {
+        items.add(morpheme.getItem().getDefaultInstance());
+      }
     }
 
     return items;
@@ -209,7 +221,9 @@ public final class Inkomancy {
     }
 
     for (var morpheme : Morpheme.getMorphemes()) {
-      morpheme.register();
+      if (morpheme.hasGlyph()) {
+        morpheme.register();
+      }
     }
 
     RECIPE_SERIALIZER.register(TransmutationRecipe.Type.ID, () -> TransmutationRecipe.Serializer.INSTANCE);
@@ -242,7 +256,7 @@ public final class Inkomancy {
         items.add(LootItem.lootTableItem(AMANUENSIS.get()).setWeight(2));
 
         for (var entry : magicItems().entrySet()) {
-          items.add(LootItem.lootTableItem(entry.getKey()).apply(SetComponentsFunction.setComponent(SPELL_COMPONENT_TYPE.get(), entry.getValue())));
+          items.add(LootItem.lootTableItem(entry.getKey()).apply(SetComponentsFunction.setComponent(entry.getValue().component(), entry.getValue().spell())));
         }
 
         var poolBuilder = LootPool.lootPool().add(EmptyLootItem.emptyItem().setWeight((items.size() + 1) * (tables.get(key) - 1)));

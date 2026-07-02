@@ -209,7 +209,9 @@ public class InkomancyModelGenerator extends FabricModelProvider {
     }
 
     for (var morpheme : Morpheme.getMorphemes()) {
-      generator.generateFlatItem(morpheme.getItem(), ModelTemplates.FLAT_ITEM);
+      if (morpheme.hasGlyph()) {
+        generator.generateFlatItem(morpheme.getItem(), ModelTemplates.FLAT_ITEM);
+      }
     }
 
     generator.generateFlatItem(Inkomancy.INKY.get(), ModelTemplates.FLAT_ITEM);

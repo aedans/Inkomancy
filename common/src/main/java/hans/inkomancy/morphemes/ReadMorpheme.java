@@ -16,7 +16,7 @@ public class ReadMorpheme extends Morpheme {
 
   @Override
   public Spell interpretAsSpell(Spell spell, SpellContext context) {
-    return new Spell(SourceMorpheme.INSTANCE, spell.connected()).base();
+    return new Spell(SourceMorpheme.CAST, spell.connected()).base();
   }
 
   @Override

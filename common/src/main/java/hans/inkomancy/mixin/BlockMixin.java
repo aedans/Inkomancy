@@ -27,7 +27,7 @@ public class BlockMixin {
       BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, @Nullable BlockEntity blockEntity, @Nullable Entity entity, ItemStack itemStack, CallbackInfoReturnable<List<ItemStack>> cir
   ) {
     if (MagicItem.isMagicItem(itemStack) && entity instanceof ServerPlayer player) {
-      var spell = itemStack.get(Inkomancy.SPELL_COMPONENT_TYPE.get());
+      var spell = itemStack.get(Inkomancy.BREAK_SPELL_COMPONENT_TYPE.get());
       if (spell != null) {
         var mana = new ManaProvider(VoidInk.INSTANCE, VoidInk.INSTANCE.getMana(Set.of()));
         var context = new SpellContext(serverLevel, player, VoidInk.INSTANCE, mana, blockPos, cir.getReturnValue().stream().map(Delegate.Instance::new).toList());

@@ -37,6 +37,12 @@ public abstract class Morpheme {
     return item.get();
   }
 
+  // Whether this morpheme can be drawn in-world. Morphemes that are only ever produced
+  // programmatically (e.g. the items-source root) have no glyph and get no item.
+  public boolean hasGlyph() {
+    return Glyph.GLYPH_MAP.containsKey(this);
+  }
+
   public static Morpheme[] getMorphemes() {
     return new Morpheme[]{
         BetweenMorpheme.INSTANCE,
@@ -51,14 +57,15 @@ public abstract class Morpheme {
         DirectionMorpheme.BACKWARDS_RIGHT,
         DirectionMorpheme.UP,
         DirectionMorpheme.DOWN,
-        ForeverMorpheme.INSTANCE,
+        ImbueMorpheme.INSTANCE,
         GrowMorpheme.INSTANCE,
         HoleMorpheme.INSTANCE,
         MatchMorpheme.INSTANCE,
         ReadMorpheme.INSTANCE,
         RepairMorpheme.INSTANCE,
         SelfMorpheme.INSTANCE,
-        SourceMorpheme.INSTANCE,
+        SourceMorpheme.CAST,
+        SourceMorpheme.BREAK,
         StarMorpheme.INSTANCE,
         SummonMorpheme.INSTANCE,
         SwapMorpheme.INSTANCE,

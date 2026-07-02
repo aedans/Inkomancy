@@ -18,7 +18,7 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
     TRUE
   }
 
-  public static final Glyph START = Glyph.create(SourceMorpheme.INSTANCE, 1, """
+  public static final Glyph START = Glyph.create(SourceMorpheme.CAST, 1, """
       +++
       +++
       +++
@@ -196,12 +196,12 @@ public record Glyph(Morpheme morpheme, int width, int height, int center, Value[
           _+_
           _++
           """),
-      Glyph.create(ForeverMorpheme.INSTANCE, 2, """
+      Glyph.create(ImbueMorpheme.INSTANCE, 2, """
           ++_
           +++
           _++
           """),
-      Glyph.create(ForeverMorpheme.INSTANCE, 0, """
+      Glyph.create(ImbueMorpheme.INSTANCE, 0, """
           _++
           +++
           ++_

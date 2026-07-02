@@ -41,6 +41,7 @@ public abstract class ItemStackMixin implements DataComponentHolder {
       CallbackInfo info) {
     if (componentType == DataComponents.ENCHANTMENTS) {
       this.addToTooltip(Inkomancy.SPELL_COMPONENT_TYPE.get(), context, textConsumer, type);
+      this.addToTooltip(Inkomancy.BREAK_SPELL_COMPONENT_TYPE.get(), context, textConsumer, type);
 
       if (Boolean.TRUE.equals(this.get(Inkomancy.CONJURED_COMPONENT_TYPE.get()))) {
         textConsumer.accept(Component.literal("Conjured").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFAA00))));

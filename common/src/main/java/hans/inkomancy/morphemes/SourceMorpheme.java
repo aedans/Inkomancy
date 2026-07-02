@@ -8,10 +8,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SourceMorpheme extends Morpheme {
-  public static final SourceMorpheme INSTANCE = new SourceMorpheme();
+  // Root of an on-cast (right-click) spell: activates its children's actions.
+  public static final SourceMorpheme CAST = new SourceMorpheme("source", Type.ACTION);
+  // Root of an on-break spell: produces the items that replace a block's drops.
+  public static final SourceMorpheme BREAK = new SourceMorpheme("sink", Type.ITEMS);
 
-  private SourceMorpheme() {
-    super("source", Set.of(Type.ACTION, Type.ITEMS));
+  private SourceMorpheme(String name, Type type) {
+    super(name, Set.of(type));
   }
 
   @Override

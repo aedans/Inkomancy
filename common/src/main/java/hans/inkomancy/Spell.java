@@ -2,6 +2,7 @@ package hans.inkomancy;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import hans.inkomancy.morphemes.SourceMorpheme;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,7 +50,8 @@ public record Spell(Morpheme morpheme,
 
   @Override
   public void addToTooltip(Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag type) {
-    tooltip.accept(Component.literal("Inscribed spell").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFF55FF))));
+    var label = morpheme == SourceMorpheme.BREAK ? "Inscribed spell (on break)" : "Inscribed spell (on cast)";
+    tooltip.accept(Component.literal(label).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFF55FF))));
   }
 
   @Override
