@@ -33,7 +33,7 @@ public class HoleMorpheme extends Morpheme {
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    if (context.caster() != null && spell.connected().stream().anyMatch(s -> s.morpheme() == SelfMorpheme.INSTANCE)) {
+    if (context.caster() != null && new Args(spell, context).flag(SelfMorpheme.INSTANCE)) {
       var inventory = context.caster().getInventory();
       var items = new ArrayList<Delegate<ItemStack>>();
       for (int slot = 0; slot < inventory.getContainerSize(); slot++) {

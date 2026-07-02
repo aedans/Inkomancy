@@ -15,33 +15,23 @@ public class SelfMorpheme extends Morpheme {
     super("self", Set.of(Type.ENTITIES, Type.POSITION));
   }
 
+  // With an argument (e.g. self[hole]), self re-scopes to the players found there rather than the
+  // caster; an empty result means an argument was given but held no players. Bare self is the caster.
   @Override
   public List<? extends Delegate<? extends Entity>> interpretAsEntities(Spell spell, SpellContext context) throws InterpretError {
-    var players = players(spell, context);
-    if (players != null) {
-      return players;
-    }
-    return List.of(new Delegate.Instance<>(context.caster()));
-  }
-
-  @Override
-  public List<Position> interpretAsPositions(Spell spell, SpellContext context) throws InterpretError {
-    var players = players(spell, context);
-    if (players != null) {
-      return players.stream().map(p -> new Position(p.get().position())).toList();
-    }
-    return List.of(new Position(Objects.requireNonNull(context.caster()).position()));
-  }
-
-  // With an entity-typed argument (e.g. self[hole]), self re-scopes to the players found in that
-  // region rather than the caster. Returns null when no such argument is written, so callers fall
-  // back to the caster; an empty list means an argument was given but held no players.
-  private List<? extends Delegate<? extends Entity>> players(Spell spell, SpellContext context) throws InterpretError {
-    if (spell.connected().stream().noneMatch(s -> s.morpheme().supported.contains(Type.ENTITIES))) {
-      return null;
+    if (spell.connected().isEmpty()) {
+      return List.of(new Delegate.Instance<>(context.caster()));
     }
     return new Args(spell, context).getFlat(Type.ENTITIES, m -> m::interpretAsEntities)
         .filter(e -> e.get() instanceof Player)
         .toList();
+  }
+
+  @Override
+  public List<Position> interpretAsPositions(Spell spell, SpellContext context) throws InterpretError {
+    if (spell.connected().isEmpty()) {
+      return List.of(new Position(Objects.requireNonNull(context.caster()).position()));
+    }
+    return interpretAsEntities(spell, context).stream().map(p -> new Position(p.get().position())).toList();
   }
 }

@@ -20,10 +20,33 @@ public class SwapMorpheme extends Morpheme {
 
   @Override
   public void interpretAsAction(Spell spell, SpellContext context, boolean undo) throws InterpretError {
-    var args = new ArrayList<SwapArg>();
-    for (var arg : spell.connected()) {
-      args.addAll(interpretSwapArg(arg, context));
-    }
+    // Each child is a source (an entity) or a destination (a position). A child that could be both
+    // resolves to whichever has content: entities first, else its position. `read` masks off
+    // ENTITIES to force a destination (the entity-to-entity `swap[read[hole], hole]` case).
+    var args = new Args(spell, context).getAny(
+        Candidate.value(Type.ENTITIES, m -> m::interpretAsEntities, entity -> (SwapArg) new SwapArg() {
+          @Override
+          public Position pos() {
+            return new Position(entity.get().position());
+          }
+
+          @Override
+          public Delegate<? extends Entity> entity() {
+            return entity;
+          }
+        }),
+        Candidate.value(Type.POSITION, m -> m::interpretAsPositions, position -> (SwapArg) new SwapArg() {
+          @Override
+          public Position pos() {
+            return position;
+          }
+
+          @Override
+          public @Nullable Delegate<? extends Entity> entity() {
+            return null;
+          }
+        })
+    ).toList();
 
     var sources = new ArrayList<SwapArg>();
     var destinations = new ArrayList<SwapArg>();
@@ -73,45 +96,5 @@ public class SwapMorpheme extends Morpheme {
     Position pos();
 
     @Nullable Delegate<? extends Entity> entity();
-  }
-
-  private List<? extends SwapArg> interpretSwapArg(Spell arg, SpellContext context) throws InterpretError {
-    if (arg.morpheme().supported.contains(Type.ENTITIES)) {
-      var entities = arg.morpheme().interpretAsEntities(arg, context).stream().map(entity -> new SwapArg() {
-        @Override
-        public Position pos() {
-          return new Position(entity.get().position());
-        }
-
-        @Override
-        public Delegate<? extends Entity> entity() {
-          return entity;
-        }
-      }).toList();
-
-      if (!entities.isEmpty()) {
-        return entities;
-      }
-    }
-
-    if (arg.morpheme().supported.contains(Type.POSITION)) {
-      var positions = arg.morpheme().interpretAsPositions(arg, context).stream().map(position -> new SwapArg() {
-        @Override
-        public Position pos() {
-          return position;
-        }
-
-        @Override
-        public @Nullable Delegate<? extends Entity> entity() {
-          return null;
-        }
-      }).toList();
-
-      if (!positions.isEmpty()) {
-        return positions;
-      }
-    }
-
-    return List.of();
   }
 }

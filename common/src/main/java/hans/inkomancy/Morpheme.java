@@ -120,6 +120,15 @@ public abstract class Morpheme {
     T interpret(Spell spell, SpellContext context) throws InterpretError;
   }
 
+  // One option in a multi-type value argument (see Args.getAny). A child that supports this
+  // candidate's type and yields a non-empty result resolves to it.
+  public record Candidate<T>(Type type, Function<Morpheme, Interpreter<List<T>>> resolve) {
+    // Read the child as `type`, mapping each interpreted value into the common argument type T.
+    public static <V, T> Candidate<T> value(Type type, Function<Morpheme, Interpreter<List<V>>> interpreter, Function<V, T> map) {
+      return new Candidate<>(type, m -> (s, c) -> interpreter.apply(m).interpret(s, c).stream().map(map).collect(Collectors.toList()));
+    }
+  }
+
   public record Args(List<Spell> connected, Spell spell, SpellContext context) {
     public Args(Spell spell, SpellContext context) {
       this(new ArrayList<>(spell.connected()), spell, context);
@@ -137,6 +146,40 @@ public abstract class Morpheme {
         if (s.morpheme().supported.contains(type)) {
           connected.remove(s);
           list.add(f.apply(s.morpheme()).interpret(s, context));
+        }
+      }
+      Collections.shuffle(list);
+      return list.stream();
+    }
+
+    // Presence of a specific child morpheme, matched by identity and consumed so it is never also
+    // read as a value. This is how a morpheme declares a flag (e.g. HoleMorpheme's `self` scope).
+    public boolean flag(Morpheme flag) {
+      for (var s : List.copyOf(connected)) {
+        if (s.morpheme() == flag) {
+          connected.remove(s);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Multi-type value argument: each child resolves to the highest-precedence candidate whose type
+    // it supports and that yields a non-empty result. The sole home of the precedence +
+    // first-non-empty rule. Resolved children are consumed.
+    @SafeVarargs
+    public final <T> Stream<T> getAny(Candidate<T>... candidates) throws InterpretError {
+      var list = new ArrayList<T>();
+      for (var s : List.copyOf(connected)) {
+        for (var candidate : candidates) {
+          if (s.morpheme().supported.contains(candidate.type())) {
+            var values = candidate.resolve().apply(s.morpheme()).interpret(s, context);
+            if (!values.isEmpty()) {
+              list.addAll(values);
+              connected.remove(s);
+              break;
+            }
+          }
         }
       }
       Collections.shuffle(list);

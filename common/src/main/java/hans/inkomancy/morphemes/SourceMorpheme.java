@@ -3,9 +3,9 @@ package hans.inkomancy.morphemes;
 import hans.inkomancy.*;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SourceMorpheme extends Morpheme {
   public static final SourceMorpheme INSTANCE = new SourceMorpheme();
@@ -19,21 +19,12 @@ public class SourceMorpheme extends Morpheme {
     for (var s : spell.connected()) {
       if (s.morpheme().supported.contains(Type.ACTION)) {
         s.morpheme().interpretAsAction(s, context, undo);
-      } else if (s.morpheme().supported.contains(Type.ITEMS)) {
-        s.morpheme().interpretAsItems(s, context);
       }
     }
   }
 
   @Override
   public List<? extends Delegate<ItemStack>> interpretAsItems(Spell spell, SpellContext context) throws InterpretError {
-    var items = new ArrayList<Delegate<ItemStack>>();
-    for (var s : spell.connected()) {
-      if (s.morpheme().supported.contains(Type.ITEMS)) {
-        items.addAll(s.morpheme().interpretAsItems(s, context));
-      }
-    }
-
-    return items;
+    return new Args(spell, context).getFlat(Type.ITEMS, m -> m::interpretAsItems).collect(Collectors.toList());
   }
 }
