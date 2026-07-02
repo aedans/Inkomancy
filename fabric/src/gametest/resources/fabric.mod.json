@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "inkomancy-gametest",
+  "version": "1.0.0",
+  "name": "Inkomancy GameTests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "hans.inkomancy.fabric.gametest.SwapGameTest"
+    ]
+  },
+  "depends": {
+    "inkomancy": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

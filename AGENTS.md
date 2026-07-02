@@ -27,6 +27,7 @@ Generated assets live under `common/src/generated/` — don't hand-edit them; th
 - `./gradlew build` — build all three modules.
 - `./gradlew :fabric:runClient` / `./gradlew :neoforge:runClient` — launch in-game.
 - `./gradlew :fabric:runDatagen` — regenerate assets/data after changing datagen generators.
+- `./gradlew :fabric:runGametest` — run the spell behavior tests (headless server; exits non-zero on failure).
 
 ## Core vocabulary
 
@@ -45,6 +46,15 @@ These are the terms that recur everywhere:
 - **SpellContext / ManaProvider** — execution context (world, caster, ink, mana, position/item inputs) threaded through interpretation. `SpellContext.java`
 
 - **Interpretation** — executing a spell means calling `morpheme.interpretAsX(spell, context)` recursively; each morpheme consumes its children as the type it needs and produces items/entities/positions/an action.
+
+## Testing
+
+Spell behavior is tested with Minecraft's **GameTest** framework, not plain JUnit — the world/entity coupling (`hole` reads entities via `world.getEntities`, `swap` teleports real entities) makes a real server world the only faithful backend.
+
+- Tests live in the fabric module's dedicated `gametest` source set: `fabric/src/gametest/java/hans/inkomancy/fabric/gametest/`, with its own `fabric/src/gametest/resources/fabric.mod.json` (mod id `inkomancy-gametest`, a `fabric-gametest` entrypoint listing each test class). Gradle wiring is in `fabric/build.gradle` (`sourceSets.gametest`, the `loom { mods{} runs{ gametest } }` block, and the `fabric-gametest-api-v1` dependency). Nothing here ships in the production jar.
+- `Spells.java` is a small DSL — `swap(...)`, `read(...)`, `hole(x,y,z)`, `self(...)` build a `Spell` tree in structure-relative coords; `cast(helper, spell[, caster, mana, undo])` absolutizes positions and calls `interpretAsAction` (bypassing `Morpheme.interpret`, which swallows exceptions, so tests fail loudly). Each `@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)` reads like a spell a player could paint (see `SwapGameTest.java` for the pattern).
+- Do spawn/cast/assert synchronously in the test body so no tick passes and gravity/AI don't drift entity positions before assertions. Prefer `assertEntityPresent(type, x, y, z)` (block-AABB, tolerant of spawn bottom-center vs block-center); reach for the exact-center `Spells.isAt`/`assertAt` helpers only when a teleport lands an entity on a block center.
+- New morphemes should get a `*GameTest` class covering each branch of their `interpretAs*`, added to the entrypoint list in the gametest `fabric.mod.json`.
 
 ## Conventions
 

@@ -7,6 +7,34 @@ architectury {
     fabric()
 }
 
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+loom {
+    // Register the gametest source set as its own dev-only mod so fabric-api discovers its
+    // `fabric-gametest` entrypoint from src/gametest/resources/fabric.mod.json.
+    mods {
+        "inkomancy-gametest" {
+            sourceSet sourceSets.gametest
+        }
+    }
+
+    runs {
+        // ./gradlew :fabric:runGametest — boots a headless server, runs every @GameTest, exits non-zero on failure.
+        gametest {
+            server()
+            name = "Game Test"
+            source sourceSets.gametest
+            vmArg "-Dfabric-api.gametest"
+            runDir "build/gametest"
+        }
+    }
+}
+
 configurations {
     common {
         canBeResolved = true
@@ -32,6 +60,10 @@ dependencies {
 
     // Architectury API. This is optional, and you can comment it out if you don't need it.
     modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
+
+    // GameTest framework (Fabric). Dev-only: exercised by the `gametest` source set / runGametest task.
+    modImplementation fabricApi.module("fabric-gametest-api-v1", rootProject.fabric_api_version)
+    gametestImplementation sourceSets.main.output
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')

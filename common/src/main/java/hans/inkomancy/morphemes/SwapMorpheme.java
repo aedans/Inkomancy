@@ -7,7 +7,6 @@ import net.minecraft.world.level.portal.DimensionTransition;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,17 +47,24 @@ public class SwapMorpheme extends Morpheme {
         })
     ).toList();
 
+    // Every arg is a candidate landing spot; the ones that carry an entity are also the things that
+    // move. Including each source's own position as a spot is what lets entities trade places:
+    // swap[hole, hole] gives two entity spots and no fixed ones, so each entity's only non-self spot
+    // is the other's — they swap. swap[read[hole], hole] adds a fixed position, so the lone entity's
+    // only non-self spot is that position — it teleports there.
     var sources = new ArrayList<SwapArg>();
-    var destinations = new ArrayList<SwapArg>();
+    var spots = new ArrayList<Position>();
     for (var arg : args) {
+      spots.add(arg.pos());
       if (arg.entity() != null) {
         sources.add(arg);
-      } else {
-        destinations.add(arg);
       }
     }
 
-    if (destinations.isEmpty() && sources.size() <= 1) {
+    // With no fixed destination and at most one entity there's nothing to swap with, so send the lone
+    // source home (its respawn point, else world spawn).
+    var fixedDestinations = args.size() - sources.size();
+    if (fixedDestinations == 0 && sources.size() <= 1) {
       BlockPos spawn = null;
       if (context.caster() != null) {
         spawn = context.caster().getRespawnPosition();
@@ -68,22 +74,17 @@ public class SwapMorpheme extends Morpheme {
         spawn = context.world().getSharedSpawnPos();
       }
 
-      var center = spawn.getBottomCenter();
-      destinations.add(new SwapArg() {
-        @Override
-        public Position pos() {
-          return new Position(center.add(0, .5, 0));
-        }
-
-        @Override
-        public @Nullable Delegate<? extends Entity> entity() {
-          return null;
-        }
-      });
+      spots.add(new Position(spawn.getBottomCenter().add(0, .5, 0)));
     }
 
     for (var source : sources) {
-      var dest = Util.randomOf(destinations).pos().absolute();
+      var self = source.pos();
+      var candidates = spots.stream().filter(spot -> !spot.equals(self)).toList();
+      if (candidates.isEmpty()) {
+        continue; // nowhere else to go (e.g. stacked entities) — leave it put
+      }
+
+      var dest = Util.randomOf(candidates).absolute();
       var distance = Math.sqrt(source.pos().blockPos().distToCenterSqr(dest));
       context.mana().consume((int) distance);
       Objects.requireNonNull(source.entity()).update(entity ->
